@@ -90,3 +90,10 @@
   .token-card{ grid-template-columns:1fr 1fr; }
   .progress-track{ flex-wrap:wrap; }
 }
+@media (max-width: 600px){
+  .token-card{ grid-template-columns:1fr 1fr; gap:12px; }
+  .t-value{ font-size:18px; }
+  .t-label{ font-size:11px; }
+  .queue-table{ font-size:12px; }
+  .queue-table td, .queue-table th{ padding:9px 10px; }
+}

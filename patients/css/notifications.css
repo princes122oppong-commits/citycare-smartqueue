@@ -79,3 +79,14 @@
   padding:0;
 }
 .mark-all:hover{ text-decoration:underline; }
+
+@media (max-width: 600px){
+  .tabs{ overflow-x:auto; gap:4px; }
+  .tab{ padding:8px 12px; font-size:12.5px; white-space:nowrap; }
+  .notif-item{ padding:12px 4px; gap:10px; }
+  .n-title{ font-size:12.5px; }
+  .n-desc{ font-size:12px; }
+  .n-icon{ width:32px; height:32px; font-size:14px; }
+  .n-time{ font-size:10px; }
+  .unread-dot{ width:6px; height:6px; top:14px; }
+}
