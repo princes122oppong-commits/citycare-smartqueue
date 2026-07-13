@@ -1,0 +1,82 @@
+/* ==========================================================================
+   Walk-in Registration page — layout specific to walkin-registration.html
+   ========================================================================== */
+
+.registration-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.reg-side { display: flex; flex-direction: column; gap: 18px; }
+.side-card { padding-bottom: 18px; }
+
+.dept-selected-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px 18px;
+}
+.dept-selected-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-md);
+  background: var(--blue-100);
+  color: var(--blue-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dept-selected-icon svg { width: 19px; height: 19px; }
+.dept-selected-name { font-size: 13.5px; font-weight: 700; color: var(--text-900); }
+
+.token-preview-body {
+  padding: 0 20px 20px;
+  text-align: center;
+}
+.token-big {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--blue-600);
+  letter-spacing: -0.5px;
+}
+.token-dept { font-size: 13px; color: var(--text-500); font-weight: 600; margin-top: 2px; }
+.token-illustration { width: 100%; max-width: 160px; margin: 14px auto 4px; display: block; }
+
+.wait-time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12.5px;
+  color: var(--text-500);
+}
+.wait-time-row strong { color: var(--text-900); font-size: 13px; }
+
+/* Form */
+.reg-form { padding: 4px 20px 22px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+.form-grid .span-2 { grid-column: 1 / -1; }
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media (max-width: 1000px) {
+  .registration-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+}

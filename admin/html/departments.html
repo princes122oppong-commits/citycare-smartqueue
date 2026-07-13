@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Departments · CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../css/departments.css" />
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <img class="brand__icon" src="../../citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+      <div class="brand__text">
+        <span class="brand__title">SmartQueue</span>
+        <span class="brand__subtitle">Health</span>
+      </div>
+    </div>
+    <div class="sidebar__badge">Admin Panel</div>
+
+    <nav class="sidebar__nav">
+      <a class="nav__item" href="admin-dashboard.html"><span class="nav__icon">🏠</span> 1. Dashboard</a>
+      <a class="nav__item" href="users.html"><span class="nav__icon">👥</span> 2. Users</a>
+      <a class="nav__item nav__item--active" href="departments.html"><span class="nav__icon">🏢</span> 3. Departments</a>
+      <a class="nav__item" href="queue.html"><span class="nav__icon">📋</span> 4. Queue Management</a>
+      <a class="nav__item" href="appointments.html"><span class="nav__icon">📅</span> 5. Appointments</a>
+      <a class="nav__item" href="reports.html"><span class="nav__icon">📊</span> 6. Reports / Analytics</a>
+      <a class="nav__item" href="settings.html"><span class="nav__icon">⚙</span> 7. Settings</a>
+    </nav>
+
+    <button class="sidebar__signout" id="signoutBtn">🚪 Sign Out</button>
+    <div class="sidebar__user">
+      <div class="user__avatar">A</div>
+      <div class="user__info">
+        <span class="user__name">Admin User</span>
+        <span class="user__email">admin@healthcare.com</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <button class="topbar__menu" data-sidebar-toggle aria-label="Toggle menu">☰</button>
+      <div class="topbar__title">
+        <h1>Departments</h1>
+        <p>Create and manage hospital departments.</p>
+      </div>
+      <div class="topbar__actions">
+        <button class="icon-btn" aria-label="Notifications">🔔 <span class="icon-btn__badge">1</span></button>
+        <button class="btn-primary" id="addDeptBtn">+ Add Department</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="filters-row">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Search departments..." />
+        </div>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Department</th><th>Description</th><th>In Queue</th><th>Avg. Wait Time</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="departmentsTableBody"></tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+
+<div class="modal" id="deptModal" hidden>
+  <div class="modal__box">
+    <div class="modal__header">
+      <h3 id="modalTitle">Add Department</h3>
+      <button id="closeModalBtn" class="modal__close">✕</button>
+    </div>
+    <form id="deptForm">
+      <label>Department Name<input type="text" id="fieldName" required /></label>
+      <label>Description<input type="text" id="fieldDescription" required /></label>
+      <label>Status
+        <select id="fieldStatus">
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+      </label>
+      <div class="modal__actions">
+        <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
+        <button type="submit" class="btn-primary">Save Department</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/departments.js"></script>
+</body>
+</html>

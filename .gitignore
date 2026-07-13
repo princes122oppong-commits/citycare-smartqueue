@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+supabase-config.local.js
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE
+.vscode/launch.json
+.vscode/settings.json
+
+# Supabase local dev
+supabase/.temp
+
+# Supabase config with API keys (contains Supabase URL and anon key)
+supabase-config.js

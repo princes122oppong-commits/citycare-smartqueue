@@ -1,0 +1,46 @@
+@import url('common.css');
+
+.profile-grid{
+  display:grid;
+  grid-template-columns:1.6fr 1fr;
+  gap:20px;
+  align-items:start;
+}
+
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.static-value{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text-900);
+  padding:11px 0;
+}
+
+.side-col{ display:flex; flex-direction:column; gap:16px; }
+
+.help-card{
+  position:relative;
+  overflow:hidden;
+}
+.help-text{
+  font-size:13px;
+  color:var(--text-600);
+  margin:8px 0 16px;
+  line-height:1.5;
+}
+.help-illus{
+  position:absolute;
+  bottom:8px;
+  right:14px;
+  font-size:40px;
+  opacity:0.9;
+}
+
+@media (max-width: 900px){
+  .profile-grid{ grid-template-columns:1fr; }
+  .two-col{ grid-template-columns:1fr; }
+}

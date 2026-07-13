@@ -1,0 +1,348 @@
+/* ============================================================
+   HealthCare Smart Queue System — shared design tokens & layout
+   Imported by every page-specific stylesheet.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  /* Brand */
+  --navy-950:#0B1530;
+  --navy-900:#101B42;
+  --navy-800:#152657;
+  --navy-700:#1D3372;
+  --blue-600:#2F62FF;
+  --blue-500:#4C7DFF;
+  --blue-100:#E4ECFF;
+  --blue-50:#EFF4FF;
+
+  /* Status */
+  --amber-500:#F79009;
+  --amber-50:#FFF6E8;
+  --green-600:#12B76A;
+  --green-50:#E9FBF3;
+  --red-500:#F04438;
+  --red-50:#FEECEC;
+
+  /* Neutrals */
+  --bg:#F5F7FB;
+  --white:#FFFFFF;
+  --border:#E6E9F2;
+  --text-900:#101828;
+  --text-700:#344054;
+  --text-600:#475467;
+  --text-400:#98A2B3;
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06);
+  --shadow-pop: 0 8px 24px rgba(16,27,66,0.10);
+
+  /* Radius */
+  --r-sm:8px;
+  --r-md:12px;
+  --r-lg:18px;
+  --r-pill:999px;
+
+  /* Type */
+  --font-display:'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-body:'Inter', sans-serif;
+}
+
+*, *::before, *::after{ box-sizing:border-box; }
+html, body{ height:100%; }
+body{
+  margin:0;
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text-900);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:var(--font-display);
+  margin:0;
+  color:var(--text-900);
+}
+p{ margin:0; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; cursor:pointer; }
+input, select, textarea{ font-family:inherit; }
+
+:focus-visible{
+  outline:2px solid var(--blue-600);
+  outline-offset:2px;
+}
+
+/* ---------------- App shell ---------------- */
+.app-shell{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ---------------- Sidebar ---------------- */
+.sidebar{
+  width:264px;
+  flex-shrink:0;
+  background:linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  padding:28px 20px;
+  position:sticky;
+  top:0;
+  height:100vh;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 6px 28px;
+}
+.brand-icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:var(--blue-600);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.brand-icon svg{ width:20px; height:20px; }
+.brand-text{ line-height:1.15; }
+.brand-text .name{
+  font-family:var(--font-display);
+  font-weight:700;
+  font-size:15px;
+  color:#fff;
+}
+.brand-text .tag{
+  font-size:11px;
+  color:#8EA3D6;
+  font-weight:500;
+}
+
+.nav{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  flex:1;
+}
+.nav a{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 14px;
+  border-radius:var(--r-sm);
+  color:#B8C4E8;
+  font-size:14px;
+  font-weight:500;
+  transition:background .15s ease, color .15s ease;
+  position:relative;
+}
+.nav a svg{ width:18px; height:18px; flex-shrink:0; opacity:.9; }
+.nav a:hover{ background:rgba(255,255,255,0.06); color:#fff; }
+.nav a.active{
+  background:var(--blue-600);
+  color:#fff;
+  box-shadow:0 4px 14px rgba(47,98,255,0.35);
+}
+.nav a .badge-count{
+  margin-left:auto;
+  background:var(--red-500);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  padding:1px 7px;
+  border-radius:var(--r-pill);
+}
+
+.sidebar-help{
+  margin-top:auto;
+  background:rgba(255,255,255,0.06);
+  border-radius:var(--r-md);
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.sidebar-help .icon{
+  width:36px;
+  height:36px;
+  border-radius:var(--r-pill);
+  background:rgba(255,255,255,0.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.sidebar-help .icon svg{ width:17px; height:17px; }
+.sidebar-help .label{ font-size:13px; font-weight:600; color:#fff; }
+.sidebar-help .sub{ font-size:11.5px; color:#93A3D1; }
+
+/* ---------------- Main content ---------------- */
+.main{
+  flex:1;
+  min-width:0;
+  padding:32px 40px 60px;
+}
+.page-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:24px;
+  gap:20px;
+}
+.page-head h1{
+  font-size:24px;
+  font-weight:700;
+}
+.page-head .sub{
+  margin-top:4px;
+  font-size:14px;
+  color:var(--text-600);
+}
+
+/* ---------------- Card ---------------- */
+.card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-card);
+  padding:22px 24px;
+}
+.card-title{
+  font-size:15px;
+  font-weight:700;
+  margin-bottom:14px;
+}
+
+/* ---------------- Buttons ---------------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:none;
+  border-radius:var(--r-sm);
+  font-size:14px;
+  font-weight:600;
+  padding:12px 20px;
+  transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+}
+.btn:active{ transform:translateY(1px); }
+.btn-primary{
+  background:var(--blue-600);
+  color:#fff;
+  box-shadow:0 4px 12px rgba(47,98,255,0.28);
+}
+.btn-primary:hover{ background:#254FDB; }
+.btn-block{ width:100%; }
+.btn-ghost{
+  background:var(--blue-50);
+  color:var(--blue-600);
+}
+.btn-ghost:hover{ background:var(--blue-100); }
+
+/* ---------------- Badges / status pills ---------------- */
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 12px;
+  border-radius:var(--r-pill);
+  font-size:12.5px;
+  font-weight:700;
+}
+.pill-waiting{ background:var(--amber-50); color:var(--amber-500); }
+.pill-served{ background:var(--green-50); color:var(--green-600); }
+.pill-confirmed{ background:var(--green-50); color:var(--green-600); }
+.pill-info{ background:var(--blue-50); color:var(--blue-600); }
+.pill-you{ background:var(--blue-50); color:var(--blue-600); }
+.dot{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+/* ---------------- Form elements ---------------- */
+.field{ margin-bottom:16px; }
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-700);
+  margin-bottom:6px;
+}
+.field .hint{
+  font-size:12px;
+  color:var(--text-400);
+  margin-top:5px;
+}
+.input, .select, textarea.input{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:11px 14px;
+  font-size:14px;
+  color:var(--text-900);
+  background:var(--white);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.input:focus, .select:focus, textarea.input:focus{
+  border-color:var(--blue-600);
+  box-shadow:0 0 0 3px var(--blue-100);
+  outline:none;
+}
+select.select{
+  appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1L6 6L11 1' stroke='%23475467' stroke-width='1.6' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:36px;
+}
+textarea.input{ resize:vertical; min-height:80px; }
+
+/* ---------------- Scrollbar (subtle) ---------------- */
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-thumb{ background:#D3DAEA; border-radius:999px; }
+::-webkit-scrollbar-track{ background:transparent; }
+
+/* ---------------- Mobile hamburger toggle ---------------- */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 60;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--white);
+  align-items: center;
+  justify-content: center;
+  color: var(--text-700);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+.mobile-toggle svg { width: 20px; height: 20px; }
+
+/* ---------------- Responsive ---------------- */
+@media (max-width: 980px){
+  .mobile-toggle { display: flex; }
+  .sidebar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 8px 32px rgba(16, 27, 66, 0.2);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .main{ padding: 24px 20px 48px; padding-top: 72px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; animation:none !important; }
+}

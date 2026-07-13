@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Login - CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="staff-login.css">
+</head>
+<body>
+
+<div class="auth-page staff-auth-page">
+  <div class="auth-visual">
+    <div class="visual-scene" aria-hidden="true">
+      <img class="login-image" src="images (3).jpg" alt="CityCare Hospital staff login">
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-card">
+      <a href="index.html" class="brand">
+        <img class="brand-mark" src="citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+        <span class="brand-name">SmartQueue<br>Health</span>
+      </a>
+
+      <div class="staff-pill">Staff Portal</div>
+      <h1>Staff Sign In</h1>
+      <p class="subtitle">Use your staff email and password to access patient flow tools.</p>
+
+      <form id="staffLoginForm" novalidate>
+        <div class="field">
+          <label for="staffEmail">Staff Email</label>
+          <input type="email" id="staffEmail" name="email" placeholder="staff@clinic.com" autocomplete="email" required>
+          <span class="field-error" id="staffEmailError"></span>
+        </div>
+
+        <div class="field">
+          <label for="staffPassword">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="staffPassword" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="toggle-visibility" id="toggleStaffPassword" aria-label="Show password">Show</button>
+          </div>
+          <span class="field-error" id="staffPasswordError"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Login to Staff Portal</button>
+        <p class="switch-auth">Patient account? <a href="login.html">Use patient login</a></p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="staff-login.js"></script>
+</body>
+</html>

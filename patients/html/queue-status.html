@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Queue Status · HealthCare Smart Queue System</title>
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/queue-status.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="7" x2="20" y2="7"></line>
+      <line x1="4" y1="12" x2="20" y2="12"></line>
+      <line x1="4" y1="17" x2="20" y2="17"></line>
+    </svg>
+  </button>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.35-9.5-8.5C.8 9 2 5.5 5.2 4.6c2-.55 3.9.3 4.8 2C10.9 4.9 12.8 4 14.8 4.6 18 5.5 19.2 9 16.5 12.5 14 16.65 12 21 12 21Z" fill="white"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="name">HealthCare</div>
+        <div class="tag">Smart Queue System</div>
+      </div>
+    </div>
+
+    <ul class="nav">
+      <li><a href="patients-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>1. Dashboard</a></li>
+      <li><a href="queue-status.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>2. Queue Status</a></li>
+      <li><a href="book-appointment.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>3. Book Appointment</a></li>
+      <li><a href="join-queue.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M18 8v5M20.5 10.5H15.5"/></svg>4. Join Queue</a></li>
+      <li><a href="notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10 20a2 2 0 004 0"/></svg>5. Notifications<span class="badge-count">3</span></a></li>
+      <li><a href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>6. Profile</a></li>
+    </ul>
+
+    <div class="sidebar-help">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M3 11a9 9 0 0118 0v4a2 2 0 01-2 2h-1v-6h3M3 15v-4h3v6H5a2 2 0 01-2-2Z"/></svg></div>
+      <div>
+        <div class="label">Need help?</div>
+        <div class="sub">Contact Support</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Queue Status</h1>
+        <p class="sub">Track your current position in the queue.</p>
+      </div>
+    </div>
+
+    <!-- Token summary -->
+    <section class="card token-card">
+      <div class="token-item">
+        <span class="t-label">Your Token Number</span>
+        <span class="t-value" id="token-number">G-11</span>
+        <span class="t-sub" id="token-dept">General Physician</span>
+      </div>
+      <div class="token-item">
+        <span class="t-label">People Ahead</span>
+        <span class="t-value" id="people-ahead">12</span>
+        <span class="t-sub">people</span>
+      </div>
+      <div class="token-item">
+        <span class="t-label">Estimated Wait Time</span>
+        <span class="t-value" id="wait-time">35 mins</span>
+        <span class="t-sub">approximate</span>
+      </div>
+      <div class="token-item">
+        <span class="t-label">Status</span>
+        <span class="pill pill-waiting" id="status-pill"><span class="dot"></span>Waiting</span>
+        <span class="t-sub">In Queue</span>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <section class="card progress-card">
+      <h3 class="card-title">Queue Progress</h3>
+      <div class="progress-track" id="progress-track">
+        <div class="p-step done">
+          <span class="p-circle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#fff" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <span class="p-label">Waiting</span>
+          <span class="p-sub">You are in queue</span>
+        </div>
+        <div class="p-line"></div>
+        <div class="p-step">
+          <span class="p-circle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98A2B3" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10 20a2 2 0 004 0"/></svg></span>
+          <span class="p-label">Called</span>
+          <span class="p-sub">Waiting to be called</span>
+        </div>
+        <div class="p-line"></div>
+        <div class="p-step">
+          <span class="p-circle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98A2B3" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></span>
+          <span class="p-label">Served</span>
+          <span class="p-sub">In consultation</span>
+        </div>
+        <div class="p-line"></div>
+        <div class="p-step">
+          <span class="p-circle"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#98A2B3" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg></span>
+          <span class="p-label">Completed</span>
+          <span class="p-sub">Thank you!</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live updates -->
+    <section class="card">
+      <h3 class="card-title">Live Queue Updates</h3>
+      <table class="queue-table">
+        <thead>
+          <tr><th>Token Number</th><th>Status</th><th>Time</th></tr>
+        </thead>
+        <tbody id="queue-table-body">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+      <p class="note">Please remain near the waiting area. You will be notified when your token is called.</p>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../js/queue-status.js"></script>
+</body>
+</html>

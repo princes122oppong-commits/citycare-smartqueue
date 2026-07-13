@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin-login.css">
+</head>
+<body>
+
+<div class="auth-page">
+
+  <div class="auth-visual">
+    <div class="visual-scene" aria-hidden="true">
+      <img class="login-image" src="images (3).jpg" alt="CityCare Hospital admin login illustration">
+    </div>
+
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-card">
+      <a href="index.html" class="brand">
+        <img class="brand-mark" src="citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+        <span class="brand-name">SmartQueue<br>Health</span>
+      </a>
+
+      <h1>Administrator Sign In</h1>
+      <p class="subtitle">Sign in with your admin credentials</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="admin@example.com" autocomplete="email" required>
+          <span class="field-error" id="emailError"></span>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="toggle-visibility" id="togglePassword" aria-label="Show password">👁</button>
+          </div>
+          <span class="field-error" id="passwordError"></span>
+        </div>
+
+        <div class="field-row">
+          <label class="checkbox">
+            <input type="checkbox" name="remember">
+            <span>Remember Me</span>
+          </label>
+          <a href="#" class="link-muted">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+
+      </form>
+    </div>
+
+    <div class="compliance-badge">
+      <span class="badge-icon">🛡</span>
+      <div>
+        <strong>Admin Access</strong>
+        <p>Restricted area</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="admin-login.js"></script>
+</body>
+</html>

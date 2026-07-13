@@ -1,0 +1,8 @@
+/* ==========================================================================
+   Patients page — layout specific to patients.html
+   ========================================================================== */
+
+.toolbar-inline { display: flex; align-items: center; gap: 10px; }
+
+.data-table td:last-child,
+.data-table th:last-child { text-align: center; }

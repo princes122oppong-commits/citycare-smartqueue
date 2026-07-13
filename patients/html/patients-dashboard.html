@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · HealthCare Smart Queue System</title>
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="7" x2="20" y2="7"></line>
+      <line x1="4" y1="12" x2="20" y2="12"></line>
+      <line x1="4" y1="17" x2="20" y2="17"></line>
+    </svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.35-9.5-8.5C.8 9 2 5.5 5.2 4.6c2-.55 3.9.3 4.8 2C10.9 4.9 12.8 4 14.8 4.6 18 5.5 19.2 9 16.5 12.5 14 16.65 12 21 12 21Z" fill="white"/><path d="M8 12h2l1-2 2 4 1-2h2" stroke="#2F62FF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="name">HealthCare</div>
+        <div class="tag">Smart Queue System</div>
+      </div>
+    </div>
+
+    <ul class="nav">
+      <li><a href="patients-dashboard.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>1. Dashboard</a></li>
+      <li><a href="queue-status.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>2. Queue Status</a></li>
+      <li><a href="book-appointment.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>3. Book Appointment</a></li>
+      <li><a href="join-queue.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M18 8v5M20.5 10.5H15.5"/></svg>4. Join Queue</a></li>
+      <li><a href="notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10 20a2 2 0 004 0"/></svg>5. Notifications<span class="badge-count">3</span></a></li>
+      <li><a href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>6. Profile</a></li>
+    </ul>
+
+    <div class="sidebar-help">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M3 11a9 9 0 0118 0v4a2 2 0 01-2 2h-1v-6h3M3 15v-4h3v6H5a2 2 0 01-2-2Z"/></svg></div>
+      <div>
+        <div class="label">Need help?</div>
+        <div class="sub">Contact Support</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Welcome back, <span id="patient-name">John Doe</span> <span class="wave">👋</span></h1>
+        <p class="sub">We're glad to have you here.</p>
+      </div>
+      <button type="button" id="logout-btn" class="view-all" style="border:none; background:none; cursor:pointer; color:var(--blue-600); font-weight:600;">Logout</button>
+    </div>
+
+    <div class="dash-grid">
+      <!-- Current queue summary card -->
+      <section class="card queue-summary">
+        <div class="qs-item">
+          <span class="qs-label">Current Queue</span>
+          <span class="qs-value" id="current-queue">G-11</span>
+          <span class="qs-sub" id="current-dept">General Physician</span>
+        </div>
+        <div class="qs-item">
+          <span class="qs-label">People Ahead</span>
+          <span class="qs-value" id="people-ahead">12</span>
+          <span class="qs-sub">people</span>
+        </div>
+        <div class="qs-item">
+          <span class="qs-label">Estimated Wait Time</span>
+          <span class="qs-value" id="wait-time">35 mins</span>
+          <span class="qs-sub">approximate</span>
+        </div>
+        <div class="qs-item">
+          <span class="qs-label">Status</span>
+          <span class="pill pill-waiting" id="queue-status-pill"><span class="dot"></span>Waiting</span>
+          <span class="qs-sub">In Queue</span>
+        </div>
+      </section>
+
+      <!-- Upcoming appointments -->
+      <section class="card">
+        <div class="card-title-row">
+          <h3 class="card-title">Upcoming Appointments</h3>
+          <a href="book-appointment.html" class="view-all">View all</a>
+        </div>
+        <div class="appt-row" id="appt-list">
+          <div class="appt-date">
+            <span class="mon">MAY</span>
+            <span class="day">20</span>
+          </div>
+          <div class="appt-info">
+            <div class="appt-title">Cardiology Consultation</div>
+            <div class="appt-doc">Dr. Michael Lee</div>
+            <div class="appt-meta"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 10:00 AM &nbsp; <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-6-5.2-6-10a6 6 0 1112 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2"/></svg> Cardiology Dept.</div>
+          </div>
+          <span class="pill pill-confirmed">Confirmed</span>
+        </div>
+      </section>
+
+      <!-- Quick actions -->
+      <section class="card quick-actions">
+        <h3 class="card-title">Quick Actions</h3>
+        <div class="qa-grid">
+          <a href="join-queue.html" class="qa-item">
+            <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M18 8v5M20.5 10.5H15.5"/></svg></div>
+            <div>
+              <div class="qa-title">Join Queue Now</div>
+              <div class="qa-sub">Join the walk-in queue</div>
+            </div>
+          </a>
+          <a href="book-appointment.html" class="qa-item">
+            <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div>
+            <div>
+              <div class="qa-title">Book Appointment</div>
+              <div class="qa-sub">Schedule for a future date</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Banner -->
+      <section class="card banner">
+        <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue-600)" stroke-width="1.8"><path d="M12 21s-7-4.35-9.5-8.5C.8 9 2 5.5 5.2 4.6c2-.55 3.9.3 4.8 2C10.9 4.9 12.8 4 14.8 4.6 18 5.5 19.2 9 16.5 12.5 14 16.65 12 21 12 21Z"/></svg>
+        <div>
+          <div class="banner-title">Your health is our priority.</div>
+          <div class="banner-sub">Thank you for choosing our hospital.</div>
+        </div>
+        <div class="banner-illustration">🩺</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../../shared/js/notifications-toast.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

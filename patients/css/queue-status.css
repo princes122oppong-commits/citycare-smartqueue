@@ -1,0 +1,92 @@
+@import url('common.css');
+
+.token-card{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:24px;
+  margin-bottom:20px;
+}
+.token-item{ display:flex; flex-direction:column; gap:6px; }
+.t-label{ font-size:12.5px; color:var(--text-600); font-weight:600; }
+.t-value{ font-size:24px; font-weight:800; font-family:var(--font-display); }
+.t-sub{ font-size:12px; color:var(--text-400); }
+
+.progress-card{ margin-bottom:20px; }
+.progress-track{
+  display:flex;
+  align-items:flex-start;
+  gap:0;
+}
+.p-step{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  width:130px;
+  flex-shrink:0;
+}
+.p-circle{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#EEF1F6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:10px;
+}
+.p-step.done .p-circle{
+  background:var(--blue-600);
+  box-shadow:0 0 0 6px var(--blue-100);
+  position:relative;
+  animation:pulse 1.8s ease-out infinite;
+}
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 6px var(--blue-100); }
+  70%{ box-shadow:0 0 0 10px rgba(228,236,255,0); }
+  100%{ box-shadow:0 0 0 6px var(--blue-100); }
+}
+.p-label{ font-size:13.5px; font-weight:700; }
+.p-sub{ font-size:11.5px; color:var(--text-400); margin-top:2px; }
+.p-line{
+  flex:1;
+  height:2px;
+  background:var(--border);
+  margin-top:20px;
+  min-width:20px;
+}
+
+.queue-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13.5px;
+}
+.queue-table th{
+  text-align:left;
+  font-size:12px;
+  color:var(--text-400);
+  font-weight:600;
+  padding:0 8px 12px;
+  border-bottom:1px solid var(--border);
+}
+.queue-table td{
+  padding:12px 8px;
+  border-bottom:1px solid var(--border);
+  font-weight:600;
+}
+.queue-table tr:last-child td{ border-bottom:none; }
+.queue-table tr.you td{ color:var(--blue-600); }
+
+.note{
+  margin-top:14px;
+  font-size:12.5px;
+  color:var(--text-600);
+  background:var(--blue-50);
+  border-radius:var(--r-sm);
+  padding:10px 14px;
+}
+
+@media (max-width: 900px){
+  .token-card{ grid-template-columns:1fr 1fr; }
+  .progress-track{ flex-wrap:wrap; }
+}

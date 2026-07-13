@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CityCare Hospital — Skip the Waiting Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="header-inner">
+    <a href="index.html" class="brand">
+      <img class="brand-mark" src="citycare.png" alt="CityCare Hospital" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">
+      <span class="brand-name">CityCare<br>Hospital</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#home" class="active">Home</a>
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="login.html">Login</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="register.html" class="btn btn-primary btn-sm">Get Started</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="marquee-wrap">
+      <marquee behavior="scroll" direction="left" scrollamount="5">🏥 Welcome to CityCare Hospital — Your health is our priority. We provide quality healthcare with compassion and excellence. 🏥</marquee>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">Digital Queue Management</p>
+        <h1>Skip the Waiting Room.<br>Join the Queue Online.</h1>
+        <p class="hero-sub">Revolutionize the patient experience. Manage appointments, wait times, and check-ins effortlessly with our intelligent queue management platform. Empower staff and patients with real-time updates.</p>
+        <div class="hero-cta">
+          <a href="register.html" class="btn btn-primary">Book Appointment</a>
+          <a href="patients/html/join-queue.html" class="btn btn-outline">Join Queue <span class="arrow">→</span></a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="visual-card">
+          <img class="hero-image" src="images.jpg" alt="CityCare Hospital queue management illustration">
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stat-card">
+        <div class="stat-icon heart">♥</div>
+        <div class="stat-value">100k+</div>
+        <div class="stat-label">Patients Served</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon check">✓</div>
+        <div class="stat-value">98%</div>
+        <div class="stat-label">Patient Satisfaction</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon clock">⏱</div>
+        <div class="stat-value">35 Mins</div>
+        <div class="stat-label">Average Wait Time Saved</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="portal-section">
+    <div class="portal-inner">
+      <p class="eyebrow center">Choose your portal</p>
+      <h2 class="section-title">Access the right experience</h2>
+      <div class="portal-grid">
+        <a href="patients/html/patients-dashboard.html" class="portal-card portal-patient">
+          <div class="portal-title">Patient Portal</div>
+          <p>Book appointments, check queue status, and get notifications.</p>
+        </a>
+        <a href="staff-login.html" class="portal-card portal-staff">
+          <div class="portal-title">Staff Portal</div>
+          <p>Manage walk-ins, active queues, and patient flow.</p>
+        </a>
+        <a href="admin-login.html" class="portal-card portal-admin">
+          <div class="portal-title">Admin Dashboard</div>
+          <p>View analytics, departments, users and system settings.</p>
+        </a>
+        <a href="department-login.html" class="portal-card portal-department">
+          <div class="portal-title">Department Portal</div>
+          <p>Manage department queues, staff, and patient flow.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <p class="eyebrow center">Features</p>
+    <h2 class="section-title">Why Choose CityCare Hospital?</h2>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-icon icon-blue" aria-hidden="true">📅</div>
+        <h3>Online Appointment Booking</h3>
+        <p>Patients can book and manage appointments anytime, anywhere.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon icon-teal" aria-hidden="true">📱</div>
+        <h3>Real-time Mobile Queueing</h3>
+        <p>Track your position and receive updates directly on your mobile device.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon icon-blue" aria-hidden="true">💬</div>
+        <h3>SMS &amp; Email Notifications</h3>
+        <p>Automated alerts for appointments, delays, and queue status.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon icon-teal" aria-hidden="true">📊</div>
+        <h3>Analytics &amp; Reporting</h3>
+        <p>Gain insights into clinic performance and patient flow.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about-inner">
+      <h2 class="section-title">Built for modern healthcare</h2>
+      <p>CityCare Hospital replaces crowded waiting rooms with a transparent, real-time queue — so patients know exactly when it's their turn, and staff can focus on care instead of clipboards.</p>
+    </div>
+  </section>
+
+  <section class="contact-cta" id="contact">
+    <div class="contact-inner">
+      <h2>Ready to modernize your clinic's queue?</h2>
+      <p>Get started in minutes — no hardware required.</p>
+      <a href="register.html" class="btn btn-primary btn-lg">Get Started Free</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="brand-name small">CityCare Hospital</span>
+    <p>© 2026 CityCare Hospital. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="index.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+.staff-auth-page .auth-card {
+  border-top: 4px solid #0d9488;
+}
+
+.staff-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 18px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #e6fffb;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.staff-auth-page .toggle-visibility {
+  min-width: 56px;
+  font-size: 12px;
+  font-weight: 800;
+}

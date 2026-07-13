@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Department Login - CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+<style>
+.department-auth-page .auth-visual {
+  background: linear-gradient(135deg, #0c1a3e 0%, #1a3a6b 100%);
+}
+.department-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(47, 95, 224, 0.1);
+  color: #2f5fe0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+.department-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2f5fe0;
+}
+</style>
+</head>
+<body>
+
+<div class="auth-page department-auth-page">
+  <div class="auth-visual">
+    <div class="visual-scene" aria-hidden="true">
+      <img class="login-image" src="images (3).jpg" alt="CityCare Hospital department login">
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-card">
+      <a href="index.html" class="brand">
+        <img class="brand-mark" src="citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+        <span class="brand-name">SmartQueue<br>Health</span>
+      </a>
+
+      <div class="department-pill">Department Portal</div>
+      <h1>Department Sign In</h1>
+      <p class="subtitle">Sign in with your department account to manage your queue.</p>
+
+      <form id="deptLoginForm" novalidate>
+        <div class="field">
+          <label for="deptEmail">Department Email</label>
+          <input type="email" id="deptEmail" name="email" placeholder="cardiology@clinic.com" autocomplete="email" required>
+          <span class="field-error" id="deptEmailError"></span>
+        </div>
+
+        <div class="field">
+          <label for="deptPassword">Password</label>
+          <div class="password-wrap">
+            <input type="password" id="deptPassword" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="toggle-visibility" id="toggleDeptPassword" aria-label="Show password">Show</button>
+          </div>
+          <span class="field-error" id="deptPasswordError"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Login to Department Portal</button>
+        <p class="switch-auth">Staff member? <a href="staff-login.html">Use staff login</a></p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="department-login.js"></script>
+</body>
+</html>

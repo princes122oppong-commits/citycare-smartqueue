@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard · CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../css/admin-dashboard.css" />
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <img class="brand__icon" src="../../citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+      <div class="brand__text">
+        <span class="brand__title">SmartQueue</span>
+        <span class="brand__subtitle">Health</span>
+      </div>
+    </div>
+    <div class="sidebar__badge">Admin Panel</div>
+
+    <nav class="sidebar__nav">
+      <a class="nav__item nav__item--active" href="admin-dashboard.html">
+        <span class="nav__icon">🏠</span> 1. Dashboard
+      </a>
+      <a class="nav__item" href="users.html">
+        <span class="nav__icon">👥</span> 2. Users
+      </a>
+      <a class="nav__item" href="departments.html">
+        <span class="nav__icon">🏢</span> 3. Departments
+      </a>
+      <a class="nav__item" href="queue.html">
+        <span class="nav__icon">📋</span> 4. Queue Management
+      </a>
+      <a class="nav__item" href="appointments.html">
+        <span class="nav__icon">📅</span> 5. Appointments
+      </a>
+      <a class="nav__item" href="reports.html">
+        <span class="nav__icon">📊</span> 6. Reports / Analytics
+      </a>
+      <a class="nav__item" href="settings.html">
+        <span class="nav__icon">⚙</span> 7. Settings
+      </a>
+    </nav>
+
+    <button class="sidebar__signout" id="signoutBtn">🚪 Sign Out</button>
+    <div class="sidebar__user">
+      <div class="user__avatar">A</div>
+      <div class="user__info">
+        <span class="user__name">Admin User</span>
+        <span class="user__email">admin@healthcare.com</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN CONTENT ===================== -->
+  <main class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="topbar__menu" data-sidebar-toggle aria-label="Toggle menu">☰</button>
+      <div class="topbar__title">
+        <h1>Welcome back, Admin <span>👋</span></h1>
+        <p>Here's what's happening in your hospital today.</p>
+      </div>
+      <div class="topbar__actions">
+        <button class="date-picker" id="dateLabel">May 20, 2025 <span>▾</span></button>
+        <button class="icon-btn" aria-label="Notifications">
+          🔔 <span class="icon-btn__badge" id="notifCount">6</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stat cards -->
+    <section class="stat-grid" id="statGrid">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--blue">👤</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Total Patients Today</span>
+          <span class="stat-card__value" id="statTotalPatients">412</span>
+          <span class="stat-card__delta stat-card__delta--up">▲ 12.5% from yesterday</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--purple">⏳</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Average Wait Time</span>
+          <span class="stat-card__value" id="statAvgWait">28 mins</span>
+          <span class="stat-card__delta stat-card__delta--down">▼ 8.3% from yesterday</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--orange">📍</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Currently in Queue</span>
+          <span class="stat-card__value" id="statInQueue">73</span>
+          <span class="stat-card__delta stat-card__delta--neutral">Across all departments</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--yellow">📆</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Appointments Today</span>
+          <span class="stat-card__value" id="statAppointments">96</span>
+          <span class="stat-card__delta stat-card__delta--up">▲ 15.2% from yesterday</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row: Queue Overview + Department Status -->
+    <section class="grid-2">
+      <div class="card">
+        <div class="card__header">
+          <h2>Queue Overview</h2>
+          <select class="card__select" id="queueOverviewRange">
+            <option>Today</option>
+            <option>This Week</option>
+            <option>This Month</option>
+          </select>
+        </div>
+        <div class="chart-legend">
+          <span><i class="dot dot--blue"></i>Joined Queue</span>
+          <span><i class="dot dot--green"></i>Served</span>
+          <span><i class="dot dot--purple"></i>Average Wait Time (mins)</span>
+        </div>
+        <canvas id="queueOverviewChart" height="130"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="card__header">
+          <h2>Department Status</h2>
+          <a href="departments.html" class="card__link">View all</a>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Department</th><th>In Queue</th><th>Avg. Wait Time</th><th>Status</th></tr>
+          </thead>
+          <tbody id="departmentStatusBody">
+            <!-- populated by dashboard.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Row: Recent Queue Activity + Queue Status Distribution -->
+    <section class="grid-2">
+      <div class="card">
+        <div class="card__header">
+          <h2>Recent Queue Activity</h2>
+          <a href="queue.html" class="card__link">View all</a>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Token No.</th><th>Department</th><th>Patient Name</th><th>Status</th><th>Time</th></tr>
+          </thead>
+          <tbody id="recentQueueBody"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card__header">
+          <h2>Queue Status Distribution</h2>
+          <a href="reports.html" class="card__link">View full report</a>
+        </div>
+        <div class="donut-wrap">
+          <canvas id="queueDistributionChart" height="170"></canvas>
+          <ul class="legend-list" id="queueDistributionLegend"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Row: Upcoming Appointments + System Alerts -->
+    <section class="grid-2">
+      <div class="card">
+        <div class="card__header">
+          <h2>Upcoming Appointments</h2>
+          <a href="appointments.html" class="card__link">View all</a>
+        </div>
+        <table class="table">
+          <thead>
+            <tr><th>Time</th><th>Patient Name</th><th>Department</th><th>Type</th></tr>
+          </thead>
+          <tbody id="upcomingAppointmentsBody"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card__header">
+          <h2>System Alerts</h2>
+          <a href="#" class="card__link">View all</a>
+        </div>
+        <ul class="alert-list" id="systemAlertsList"></ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/dashboard.js"></script>
+</body>
+</html>

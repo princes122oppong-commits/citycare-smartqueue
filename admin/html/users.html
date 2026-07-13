@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Users · CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../css/users.css" />
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <img class="brand__icon" src="../../citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+      <div class="brand__text">
+        <span class="brand__title">SmartQueue</span>
+        <span class="brand__subtitle">Health</span>
+      </div>
+    </div>
+    <div class="sidebar__badge">Admin Panel</div>
+
+    <nav class="sidebar__nav">
+      <a class="nav__item" href="admin-dashboard.html"><span class="nav__icon">🏠</span> 1. Dashboard</a>
+      <a class="nav__item nav__item--active" href="users.html"><span class="nav__icon">👥</span> 2. Users</a>
+      <a class="nav__item" href="departments.html"><span class="nav__icon">🏢</span> 3. Departments</a>
+      <a class="nav__item" href="queue.html"><span class="nav__icon">📋</span> 4. Queue Management</a>
+      <a class="nav__item" href="appointments.html"><span class="nav__icon">📅</span> 5. Appointments</a>
+      <a class="nav__item" href="reports.html"><span class="nav__icon">📊</span> 6. Reports / Analytics</a>
+      <a class="nav__item" href="settings.html"><span class="nav__icon">⚙</span> 7. Settings</a>
+    </nav>
+
+    <button class="sidebar__signout" id="signoutBtn">🚪 Sign Out</button>
+    <div class="sidebar__user">
+      <div class="user__avatar">A</div>
+      <div class="user__info">
+        <span class="user__name">Admin User</span>
+        <span class="user__email">admin@healthcare.com</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================== MAIN CONTENT ===================== -->
+  <main class="main">
+
+    <header class="topbar">
+      <button class="topbar__menu" data-sidebar-toggle aria-label="Toggle menu">☰</button>
+      <div class="topbar__title">
+        <h1>Users</h1>
+        <p>Manage all system users including patients, staff, and administrators.</p>
+      </div>
+      <div class="topbar__actions">
+        <button class="icon-btn" aria-label="Notifications">🔔 <span class="icon-btn__badge">1</span></button>
+        <button class="btn-primary" id="addUserBtn">+ Add User</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="filters-row">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="searchInput" placeholder="Search users..." />
+        </div>
+        <select id="roleFilter" class="select">
+          <option value="">All Roles</option>
+          <option value="Patient">Patient</option>
+          <option value="Staff">Staff</option>
+          <option value="Department">Department</option>
+          <option value="Administrator">Administrator</option>
+        </select>
+        <select id="statusFilter" class="select">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody"></tbody>
+      </table>
+
+      <div class="pagination" id="pagination">
+        <span id="paginationInfo">Showing 1 to 7 of 25 users</span>
+        <div class="pagination__controls" id="paginationControls"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Add / Edit User Modal -->
+<div class="modal" id="userModal" hidden>
+  <div class="modal__box">
+    <div class="modal__header">
+      <h3 id="modalTitle">Add User</h3>
+      <button id="closeModalBtn" class="modal__close">✕</button>
+    </div>
+    <form id="userForm">
+      <label>Full Name<input type="text" id="fieldName" required /></label>
+      <label>Email<input type="email" id="fieldEmail" required /></label>
+      <label>Role
+        <select id="fieldRole">
+          <option>Patient</option>
+          <option>Staff</option>
+          <option>Department</option>
+          <option>Administrator</option>
+        </select>
+      </label>
+      <label id="fieldDepartmentWrap" hidden>Department
+        <select id="fieldDepartment">
+          <option value="">-- Select Department --</option>
+        </select>
+      </label>
+      <label id="fieldPasswordWrap">Login Password
+        <div class="password-wrap">
+          <input type="password" id="fieldPassword" minlength="6" autocomplete="new-password" />
+          <button type="button" class="toggle-visibility" id="togglePassword" aria-label="Show password">👁</button>
+        </div>
+      </label>
+      <label>Status
+        <select id="fieldStatus">
+          <option>Active</option>
+          <option>Inactive</option>
+        </select>
+      </label>
+      <div class="modal__actions">
+        <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
+        <button type="submit" class="btn-primary">Save User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/users.js"></script>
+</body>
+</html>

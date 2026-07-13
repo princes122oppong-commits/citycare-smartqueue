@@ -1,0 +1,6 @@
+/* ==========================================================================
+   Active Queue page — layout specific to active-queue.html
+   ========================================================================== */
+
+.data-table td:last-child,
+.data-table th:last-child { text-align: center; }

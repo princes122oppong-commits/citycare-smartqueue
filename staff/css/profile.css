@@ -1,0 +1,57 @@
+/* ==========================================================================
+   Profile page — layout specific to profile.html
+   ========================================================================== */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.profile-summary-card {
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  align-self: start;
+}
+
+.profile-photo {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.profile-photo svg { width: 38px; height: 38px; }
+
+.profile-summary-name { font-size: 15px; font-weight: 700; color: var(--text-900); }
+.profile-summary-role { font-size: 12.5px; color: var(--text-500); font-weight: 600; margin-top: 2px; }
+.profile-summary-email { font-size: 12px; color: var(--text-400); margin-top: 6px; }
+
+.profile-form { padding: 4px 20px 22px; }
+
+.profile-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.profile-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media (max-width: 900px) {
+  .profile-grid { grid-template-columns: 1fr; }
+  .profile-form .form-grid { grid-template-columns: 1fr; }
+}

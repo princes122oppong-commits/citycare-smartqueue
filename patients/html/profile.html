@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile · HealthCare Smart Queue System</title>
+<link rel="stylesheet" href="../css/common.css">
+<link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+<div class="app-shell">
+
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="7" x2="20" y2="7"></line>
+      <line x1="4" y1="12" x2="20" y2="12"></line>
+      <line x1="4" y1="17" x2="20" y2="17"></line>
+    </svg>
+  </button>
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.35-9.5-8.5C.8 9 2 5.5 5.2 4.6c2-.55 3.9.3 4.8 2C10.9 4.9 12.8 4 14.8 4.6 18 5.5 19.2 9 16.5 12.5 14 16.65 12 21 12 21Z" fill="white"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="name">HealthCare</div>
+        <div class="tag">Smart Queue System</div>
+      </div>
+    </div>
+
+    <ul class="nav">
+      <li><a href="patients-dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>1. Dashboard</a></li>
+      <li><a href="queue-status.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>2. Queue Status</a></li>
+      <li><a href="book-appointment.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>3. Book Appointment</a></li>
+      <li><a href="join-queue.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M18 8v5M20.5 10.5H15.5"/></svg>4. Join Queue</a></li>
+      <li><a href="notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10 20a2 2 0 004 0"/></svg>5. Notifications<span class="badge-count">3</span></a></li>
+      <li><a href="profile.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>6. Profile</a></li>
+    </ul>
+
+    <div class="sidebar-help">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M3 11a9 9 0 0118 0v4a2 2 0 01-2 2h-1v-6h3M3 15v-4h3v6H5a2 2 0 01-2-2Z"/></svg></div>
+      <div>
+        <div class="label">Need help?</div>
+        <div class="sub">Contact Support</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Profile</h1>
+        <p class="sub">View and update your personal information.</p>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <!-- Personal info form -->
+      <section class="card">
+        <h3 class="card-title">Personal Information</h3>
+        <form id="profile-form">
+          <div class="field">
+            <label for="full-name">Full Name</label>
+            <input type="text" id="full-name" class="input" value="John Doe">
+          </div>
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="input" value="+1 123 456 7890">
+          </div>
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="input" value="john.doe@email.com">
+          </div>
+          <div class="two-col">
+            <div class="field">
+              <label for="gender">Gender</label>
+              <select id="gender" class="select">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+                <option>Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input type="text" id="address" class="input" value="123 Health St, Cityville, State 12345">
+          </div>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+      </section>
+
+      <!-- Account + help -->
+      <aside class="side-col">
+        <section class="card">
+          <h3 class="card-title">Account Information</h3>
+          <div class="field">
+            <label>Username</label>
+            <div class="static-value" id="username">john.doe</div>
+          </div>
+          <div class="field">
+            <label>Member Since</label>
+            <div class="static-value" id="member-since">May 10, 2025</div>
+          </div>
+          <button class="btn btn-ghost btn-block" id="change-password">Change Password</button>
+        </section>
+
+        <section class="card help-card">
+          <h3 class="card-title">Need Help?</h3>
+          <p class="help-text">If you need assistance with your account, please contact our support team.</p>
+          <button class="btn btn-ghost btn-block">Contact Support</button>
+          <div class="help-illus">👩‍⚕️</div>
+        </section>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../js/profile.js"></script>
+</body>
+</html>
