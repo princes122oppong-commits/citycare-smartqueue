@@ -48,6 +48,78 @@
   --font-body:'Inter', sans-serif;
 }
 
+/* DNA Helix Hover Effect for Navigation */
+.nav-link,
+.sidebar-nav .nav-link,
+.nav__item {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-link::before,
+.nav-link::after,
+.sidebar-nav .nav-link::before,
+.sidebar-nav .nav-link::after,
+.nav__item::before,
+.nav__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--blue-600), var(--blue-500));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.nav-link::before,
+.sidebar-nav .nav-link::before,
+.nav__item::before {
+  top: 0;
+  transform-origin: left;
+}
+
+.nav-link::after,
+.sidebar-nav .nav-link::after,
+.nav__item::after {
+  bottom: 0;
+  transform-origin: right;
+}
+
+.nav-link:hover::before,
+.nav-link:hover::after,
+.sidebar-nav .nav-link:hover::before,
+.sidebar-nav .nav-link:hover::after,
+.nav__item:hover::before,
+.nav__item:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link:hover,
+.sidebar-nav .nav-link:hover,
+.nav__item:hover {
+  transform: translateX(4px);
+  color: var(--blue-600);
+}
+
+/* DNA Strand Animation */
+@keyframes dnaTwist {
+  0% {
+    transform: rotateY(0deg) translateX(0);
+  }
+  50% {
+    transform: rotateY(180deg) translateX(2px);
+  }
+  100% {
+    transform: rotateY(360deg) translateX(0);
+  }
+}
+
+.nav-link:hover svg,
+.sidebar-nav .nav-link:hover svg {
+  animation: dnaTwist 0.6s ease-in-out;
+}
+
 *, *::before, *::after{ box-sizing:border-box; }
 html, body{ height:100%; }
 body{
