@@ -76,7 +76,12 @@ if (loginForm) {
         password: passwordInput.value,
       });
 
-      if (authResult.error) throw authResult.error;
+      if (authResult.error) {
+        if (authResult.error.message.includes('Email not confirmed')) {
+          throw new Error('Please confirm your email before logging in. Check your inbox for the confirmation link.');
+        }
+        throw authResult.error;
+      }
 
       var userId = authResult.data.user.id;
       if (!userId) throw new Error('Unable to authenticate user.');
