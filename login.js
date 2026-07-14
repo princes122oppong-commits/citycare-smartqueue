@@ -77,9 +77,6 @@ if (loginForm) {
       });
 
       if (authResult.error) {
-        if (authResult.error.message.includes('Email not confirmed')) {
-          throw new Error('Please confirm your email before logging in. Check your inbox for the confirmation link.');
-        }
         throw authResult.error;
       }
 
