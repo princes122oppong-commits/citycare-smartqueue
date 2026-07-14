@@ -68,7 +68,7 @@ staffLoginForm?.addEventListener("submit", async (event) => {
   let hasError = false;
 
   if (!isValidStaffEmail(email)) {
-    staffEmailError.textContent = "Please enter a valid staff email address.";
+    staffEmailError.textContent = "Please enter a valid receptionist email address.";
     hasError = true;
   }
 
@@ -97,12 +97,12 @@ staffLoginForm?.addEventListener("submit", async (event) => {
     const staff = await findStaffProfile(data.user.id, email);
     if (!staff) {
       await supabaseClient.auth.signOut();
-      throw new Error("No staff profile is linked to this email.");
+      throw new Error("No receptionist profile is linked to this email.");
     }
 
     if (staff.profile.status && staff.profile.status !== "Active") {
       await supabaseClient.auth.signOut();
-      throw new Error("This staff account is not active.");
+      throw new Error("This receptionist account is not active.");
     }
 
     window.location.href = "staff/html/staff-dashboard.html";
@@ -110,7 +110,7 @@ staffLoginForm?.addEventListener("submit", async (event) => {
     staffPasswordError.textContent = error.message || "Unable to sign in. Please try again.";
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = "Login to Staff Portal";
+    submitBtn.textContent = "Login to Receptionist Portal";
   }
 });
 
