@@ -222,12 +222,6 @@ async function insertWalkinPatient(payload) {
     patientId = insertedPatient.id;
   }
 
-  // Generate sequential token number
-  const token = await generateNextToken(departmentId, departmentName);
-  if (!token) {
-    return { token: null, error: new Error("Unable to generate token number.") };
-  }
-
   // Get staff_id from the logged-in staff profile
   const staffId = staffProfile?.profile?.id || null;
 
@@ -240,40 +234,66 @@ async function insertWalkinPatient(payload) {
 
   const expectedWaitMinutes = Math.max(5, (aheadCount || 0) * 5);
 
-  // Insert queue entry
-  const { data: queueEntry, error: queueInsertError } = await supabaseClient
-    .from("queue_entries")
-    .insert({
-      token_no: token,
-      patient_id: patientId,
-      department_id: departmentId,
-      staff_id: staffId,
-      status: "waiting",
-      type: "walk-in",
-      reason: payload.reason,
-      expected_wait_minutes: expectedWaitMinutes,
-    })
-    .select("token_no")
-    .single();
+  // Try to insert with retry logic for token generation (max 3 attempts)
+  let lastError = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    // Generate sequential token number
+    const token = await generateNextToken(departmentId, departmentName);
+    if (!token) {
+      return { token: null, error: new Error("Unable to generate token number.") };
+    }
 
-  if (queueInsertError) {
+    // Insert queue entry
+    const { data: queueEntry, error: queueInsertError } = await supabaseClient
+      .from("queue_entries")
+      .insert({
+        token_no: token,
+        patient_id: patientId,
+        department_id: departmentId,
+        staff_id: staffId,
+        status: "waiting",
+        type: "walk-in",
+        reason: payload.reason,
+        expected_wait_minutes: expectedWaitMinutes,
+      })
+      .select("token_no")
+      .single();
+
+    if (!queueInsertError) {
+      // Success! Create notification and return
+      try {
+        await supabaseClient.from("notifications").insert({
+          patient_id: patientId,
+          title: "Queue Token Generated",
+          body: `Your token ${token} for ${departmentName} has been generated. Please wait for your turn.`,
+          category: "queue",
+          icon: "📡",
+          unread: true,
+        });
+      } catch (notifErr) {
+        console.warn("Failed to create notification:", notifErr.message);
+        // Non-critical - don't abort the operation
+      }
+
+      return { token: queueEntry.token_no, error: null };
+    }
+
+    // If it's a duplicate key error, retry with next token
+    if (queueInsertError.code === "23505") {
+      console.warn(`Token ${token} already exists, retrying with next token (attempt ${attempt + 1}/3)...`);
+      lastError = queueInsertError;
+      // Small delay before retry
+      await new Promise(resolve => setTimeout(resolve, 100));
+      continue;
+    }
+
+    // Other error - return immediately
     return { token: null, error: queueInsertError };
   }
 
-  // Create notification for the patient
-  try {
-    await supabaseClient.from("notifications").insert({
-      patient_id: patientId,
-      title: "Queue Token Generated",
-      body: `Your token ${token} for ${departmentName} has been generated. Please wait for your turn.`,
-      category: "queue",
-      icon: "📡",
-      unread: true,
-    });
-  } catch (notifErr) {
-    console.warn("Failed to create notification:", notifErr.message);
-    // Non-critical - don't abort the operation
-  }
-
-  return { token: queueEntry.token_no, error: null };
+  // All retries failed
+  return { 
+    token: null, 
+    error: new Error(`Failed to generate unique token after 3 attempts. Please try again. Original error: ${lastError?.message}`) 
+  };
 }
