@@ -84,7 +84,10 @@ async function loadDepartments(selectEl) {
     return;
   }
 
-  if (!data?.length) return;
+  if (!data?.length) {
+    selectEl.innerHTML = '<option value="">No departments available</option>';
+    return;
+  }
 
   selectEl.innerHTML = data
     .map(
@@ -92,6 +95,11 @@ async function loadDepartments(selectEl) {
         `<option value="${escapeHtml(dept.name)}" data-dept-id="${dept.id}">${escapeHtml(dept.name)}</option>`
     )
     .join("");
+
+  // Add change listener to ensure selectedDepartmentId is always updated
+  selectEl.addEventListener("change", () => {
+    updateSelectedDepartment(selectEl);
+  });
 
   // Set initial selected department
   updateSelectedDepartment(selectEl);

@@ -495,6 +495,20 @@ create index if not exists idx_notifications_patient on notifications(patient_id
 create index if not exists idx_staff_department on staff(department_id);
 
 /* ==========================================================================
+   QUEUE SEQUENCES TABLE
+   For atomic token generation without race conditions
+   ========================================================================== */
+
+create table if not exists queue_sequences (
+  department_id int primary key references departments(id),
+  last_number int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_queue_sequences_department on queue_sequences(department_id);
+
+/* ==========================================================================
    FUNCTION: generate_next_queue_token()
    Atomically generates the next unique token for a department
    This prevents race conditions when multiple staff register patients simultaneously
@@ -507,40 +521,38 @@ security definer
 set search_path = public
 as $$
 declare
+  v_next int;
   v_prefix text;
-  v_max_seq int;
-  v_next_token text;
 begin
-  -- Lock the department row to prevent race conditions
-  select initials, name into v_prefix
+  -- Ensure sequence record exists
+  insert into queue_sequences(department_id, last_number)
+  values(p_department_id, 0)
+  on conflict do nothing;
+  
+  -- Atomically increment and get next number
+  update queue_sequences
+  set last_number = last_number + 1
+  where department_id = p_department_id
+  returning last_number into v_next;
+  
+  -- Get department initials
+  select initials into v_prefix
   from departments
-  where id = p_department_id
-  for update;
+  where id = p_department_id;
   
   -- Fallback if no initials found
   if v_prefix is null or v_prefix = '' then
-    v_prefix := upper(left(name, 1));
+    select upper(left(name, 1)) into v_prefix
+    from departments
+    where id = p_department_id;
   end if;
   
   if v_prefix is null or v_prefix = '' then
     v_prefix := 'Q';
   end if;
   
-  -- Get the maximum sequence number for this department (across all time, not just today)
-  select coalesce(max(
-    case
-      when token_no ~ ('^' || v_prefix || '[0-9]+$') then
-        cast(substring(token_no from length(v_prefix) + 1) as int)
-      else 0
-    end
-  ), 0) into v_max_seq
-  from queue_entries
-  where department_id = p_department_id;
-  
-  -- Generate next token
-  v_next_token := v_prefix || lpad((v_max_seq + 1)::text, 3, '0');
-  
-  return v_next_token;
+  -- Return formatted token
+  return v_prefix || lpad(v_next::text, 3, '0');
 end;
 $$;
 
