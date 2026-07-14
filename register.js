@@ -166,6 +166,8 @@ form?.addEventListener("submit", async (e) => {
           );
         }
         authUser = signInData.user;
+      } else if (signUpError.message.includes('rate limit') || signUpError.message.includes('429')) {
+        throw new Error('Too many signup attempts. Please wait a few minutes and try again. This is a security measure to prevent spam.');
       } else {
         throw signUpError;
       }
