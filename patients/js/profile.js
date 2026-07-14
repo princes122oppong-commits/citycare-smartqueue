@@ -16,11 +16,24 @@ async function loadProfile() {
     return;
   }
 
+  // Get auth user for username
+  var authResult = await supabaseClient.auth.getUser();
+  var authUser = authResult.data?.user;
+  var username = authUser?.email?.split('@')[0] || 'user';
+  var memberSince = patient.created_at ? new Date(patient.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+
+  // Personal information
   document.getElementById('full-name').value = patient.full_name || '';
   document.getElementById('phone').value = patient.phone || '';
   document.getElementById('email').value = patient.email || '';
   document.getElementById('gender').value = patient.gender || 'Male';
   document.getElementById('address').value = patient.address || '';
+
+  // Account information
+  var usernameEl = document.getElementById('username');
+  var memberSinceEl = document.getElementById('member-since');
+  if (usernameEl) usernameEl.textContent = username;
+  if (memberSinceEl) memberSinceEl.textContent = memberSince;
 }
 
 async function handleSave(e) {
