@@ -202,7 +202,7 @@ async function renderDashboard(patient, authUser){
     ].filter(Boolean);
 
     welcomeSubtitle.innerHTML = details.length
-      ? `Signed in as <strong>${details.map(escapeHtml).join(" • ")}</strong>`
+      ? `Welcome back, <strong>${details.map(escapeHtml).join(" ")}</strong> <span class="wave">👋</span>`
       : "We're glad to have you here.";
   }
 
