@@ -25,6 +25,16 @@ async function fetchDashboardQueueRows() {
     return [];
   }
 
+  if (departmentResult.error) {
+    console.error("Failed to load departments:", departmentResult.error.message);
+    return [];
+  }
+
+  if (patientResult.error) {
+    console.error("Failed to load patients:", patientResult.error.message);
+    return [];
+  }
+
   const departmentMap = Object.fromEntries((departmentResult.data || []).map((row) => [row.id, row.name]));
   const patientMap = Object.fromEntries((patientResult.data || []).map((row) => [row.id, row.full_name]));
 

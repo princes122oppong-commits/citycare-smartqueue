@@ -46,13 +46,15 @@ document.addEventListener("DOMContentLoaded", async function() {
   deptId = staffResult.data.department_id;
 
   // Get department name
-  var deptResult = await supabaseClient
-    .from("departments")
-    .select("name")
-    .eq("id", deptId)
-    .single();
-
-  deptName = deptResult.data ? deptResult.data.name : "Department";
+  var deptName = "Department";
+  if (deptId) {
+    var deptResult = await supabaseClient
+      .from("departments")
+      .select("name")
+      .eq("id", deptId)
+      .single();
+    deptName = deptResult.data ? deptResult.data.name : "Department";
+  }
 
   // Update page title and sidebar
   var titles = document.querySelectorAll("#pageTitle");
@@ -105,7 +107,10 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 async function loadQueue() {
-  if (!supabaseClient || !deptId) return;
+  if (!supabaseClient || !deptId) {
+    console.warn("loadQueue: Missing department ID");
+    return;
+  }
 
   // Fetch queue entries for this department only
   var today = startOfTodayIso();
@@ -309,7 +314,10 @@ async function markAsServed() {
 }
 
 async function loadTodaysAppointments() {
-  if (!supabaseClient || !deptId) return;
+  if (!supabaseClient || !deptId) {
+    console.warn("loadTodaysAppointments: Missing department ID");
+    return;
+  }
 
   var todayStr = new Date().toISOString().slice(0, 10);
   var tomorrowStr = new Date(Date.now() + 86400000).toISOString().slice(0, 10);

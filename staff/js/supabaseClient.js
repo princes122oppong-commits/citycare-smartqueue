@@ -155,11 +155,17 @@ async function getCurrentStaffProfile() {
       .maybeSingle();
 
     if (!staffResult.error && staffResult.data) {
-      const { data: departmentRow } = await supabaseClient
-        .from("departments")
-        .select("name")
-        .eq("id", staffResult.data.department_id)
-        .maybeSingle();
+      let departmentRow = null;
+      if (staffResult.data.department_id) {
+        const deptResult = await supabaseClient
+          .from("departments")
+          .select("name")
+          .eq("id", staffResult.data.department_id)
+          .maybeSingle();
+        if (!deptResult.error) {
+          departmentRow = deptResult.data;
+        }
+      }
 
       return {
         source: "staff",
@@ -183,11 +189,17 @@ async function getCurrentStaffProfile() {
       .maybeSingle();
 
     if (!userResult.error && userResult.data && ["Staff", "Administrator"].includes(userResult.data.role)) {
-      const { data: departmentRow } = await supabaseClient
-        .from("departments")
-        .select("name")
-        .eq("id", userResult.data.department_id)
-        .maybeSingle();
+      let departmentRow = null;
+      if (userResult.data.department_id) {
+        const deptResult = await supabaseClient
+          .from("departments")
+          .select("name")
+          .eq("id", userResult.data.department_id)
+          .maybeSingle();
+        if (!deptResult.error) {
+          departmentRow = deptResult.data;
+        }
+      }
 
       return {
         source: "users",

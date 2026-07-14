@@ -72,6 +72,16 @@ async function loadPatients() {
     return;
   }
 
+  if (departmentResult.error) {
+    console.error("Failed to load departments:", departmentResult.error.message);
+    return;
+  }
+
+  if (queueResult.error) {
+    console.error("Failed to load queue entries:", queueResult.error.message);
+    return;
+  }
+
   const departmentMap = Object.fromEntries((departmentResult.data || []).map((row) => [row.id, row.name]));
   const latestQueueByPatient = {};
   (queueResult.data || []).forEach((row) => {
