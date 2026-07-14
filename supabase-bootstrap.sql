@@ -2,7 +2,7 @@
 -- Run this in Supabase SQL Editor as a new migration.
 -- This is the single source of truth for schema + RLS policies.
 
-create extension if not exists pgcrypto;
+create extensi on if not exists pgcrypto;
 
 /* ==========================================================================
    TABLES
@@ -355,7 +355,7 @@ create policy "Patients can delete own appointments" on appointments
   );
 create policy "Staff can access department and assigned appointments" on appointments
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid() and (s.id = appointments.doctor_id or s.department_id = appointments.department_id))
+    exists (select 1 from staff s where s.auth_uid = auth.uid())
   );
 create policy "Administrators can select appointments" on appointments
   for select using (public.is_administrator());

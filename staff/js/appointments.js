@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!deptFilter || !statusFilter || !searchInput) return;
 
   loadAppointments();
+  subscribeToRealtimeUpdates();
 
   deptFilter.addEventListener("change", renderAppointmentsTable);
   statusFilter.addEventListener("change", renderAppointmentsTable);
@@ -81,6 +82,18 @@ async function loadAppointments() {
   }));
 
   renderAppointmentsTable();
+}
+
+function subscribeToRealtimeUpdates() {
+  if (!supabaseClient?.channel) return;
+  
+  supabaseClient
+    .channel("staff-appointments-realtime")
+    .on("postgres_changes",
+      { event: "*", schema: "public", table: "appointments" },
+      function() { loadAppointments(); }
+    )
+    .subscribe();
 }
 
 function viewIcon() {

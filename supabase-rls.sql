@@ -156,7 +156,7 @@ create policy "Patients can delete own appointments" on appointments
   );
 create policy "Staff can access department and assigned appointments" on appointments
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid() and (s.id = appointments.doctor_id or s.department_id = appointments.department_id))
+    exists (select 1 from staff s where s.auth_uid = auth.uid())
   );
 create policy "Administrators can select appointments" on appointments
   for select using (public.is_administrator());
