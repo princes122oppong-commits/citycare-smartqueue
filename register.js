@@ -195,14 +195,35 @@ form?.addEventListener("submit", async (e) => {
 
     console.log("Patient Payload:", patientPayload);
 
-    const {
-      data: patientData,
-      error: patientError,
-    } = await supabaseClient
+    // Check if patient with this email already exists
+    const { data: existingPatient } = await supabaseClient
       .from("patients")
-      .upsert(patientPayload, { onConflict: "email" })
-      .select()
-      .single();
+      .select("id")
+      .eq("email", fields.email.value.trim())
+      .maybeSingle();
+
+    let patientData, patientError;
+
+    if (existingPatient) {
+      // Update existing patient record
+      var updateResult = await supabaseClient
+        .from("patients")
+        .update(patientPayload)
+        .eq("id", existingPatient.id)
+        .select()
+        .single();
+      patientData = updateResult.data;
+      patientError = updateResult.error;
+    } else {
+      // Insert new patient record
+      var insertResult = await supabaseClient
+        .from("patients")
+        .insert(patientPayload)
+        .select()
+        .single();
+      patientData = insertResult.data;
+      patientError = insertResult.error;
+    }
 
     console.log("Patient Record:", patientData);
     console.log("Patient Insert Error:", patientError);
