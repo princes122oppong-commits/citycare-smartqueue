@@ -196,8 +196,7 @@ async function renderDashboard(patient, authUser){
 
   const welcomeSubtitle = document.querySelector(".page-head .sub");
   if (welcomeSubtitle) {
-    const displayName = authUser?.user_metadata?.full_name || patient?.full_name || "Patient";
-    welcomeSubtitle.innerHTML = `Welcome back, <strong>${escapeHtml(displayName)}</strong> <span class="wave">👋</span>`;
+    welcomeSubtitle.textContent = "We're glad to have you here.";
   }
 
 
