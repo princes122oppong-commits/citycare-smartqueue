@@ -25,6 +25,7 @@ async function loadDepartments() {
     return {
       id: department.id,
       name: department.name || "Unnamed",
+      initials: department.initials || "",
       description: department.description || "",
       in_queue: entries.length,
       avg_wait: averageWait(entries),
@@ -38,7 +39,7 @@ async function loadDepartments() {
 function renderTable() {
   const search = document.getElementById("searchInput").value.toLowerCase();
   const rows = allDepartments.filter((d) =>
-    !search || d.name.toLowerCase().includes(search) || d.description.toLowerCase().includes(search)
+    !search || d.name.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || (d.initials || "").toLowerCase().includes(search)
   );
 
   const body = document.getElementById("departmentsTableBody");
@@ -46,6 +47,7 @@ function renderTable() {
     ? rows.map((d) => `
       <tr data-id="${d.id}">
         <td>${escapeHtml(d.name)}</td>
+        <td><span class="pill pill--info">${escapeHtml(d.initials)}</span></td>
         <td>${escapeHtml(d.description)}</td>
         <td>${d.in_queue}</td>
         <td>${formatMinutes(d.avg_wait)}</td>
@@ -56,13 +58,14 @@ function renderTable() {
         </td>
       </tr>
     `).join("")
-    : `<tr><td colspan="6">No departments found.</td></tr>`;
+    : `<tr><td colspan="7">No departments found.</td></tr>`;
 }
 
 function openModal(dept = null) {
   editingDeptId = dept ? dept.id : null;
   document.getElementById("modalTitle").textContent = dept ? "Edit Department" : "Add Department";
   document.getElementById("fieldName").value = dept?.name || "";
+  document.getElementById("fieldInitials").value = dept?.initials || "";
   document.getElementById("fieldDescription").value = dept?.description || "";
   document.getElementById("fieldStatus").value = dept?.status || "Active";
   document.getElementById("deptModal").hidden = false;
@@ -77,11 +80,16 @@ async function handleFormSubmit(e) {
   e.preventDefault();
   const payload = {
     name: document.getElementById("fieldName").value.trim(),
+    initials: document.getElementById("fieldInitials").value.trim().toUpperCase(),
     description: document.getElementById("fieldDescription").value.trim(),
     status: document.getElementById("fieldStatus").value,
   };
 
   if (!payload.name) return;
+  if (!payload.initials) {
+    alert("Please enter department initials (e.g., GM, LS, PED).");
+    return;
+  }
 
   const request = editingDeptId
     ? supabaseClient.from("departments").update(payload).eq("id", editingDeptId)
@@ -111,8 +119,6 @@ async function handleTableClick(e) {
     if (!confirm(`Deactivate the "${dept.name}" department?\n\nThis will set the department to "Inactive" so it won't appear in dropdowns. Existing queue entries and appointments will be preserved.\n\nAre you sure?`)) return;
 
     try {
-      // Set department to Inactive instead of deleting
-      // This avoids foreign key constraint issues with queue_entries, appointments, and staff
       const deptResult = await supabaseClient
         .from("departments")
         .update({ status: "Inactive" })

@@ -48,7 +48,7 @@
       <button class="topbar__menu" data-sidebar-toggle aria-label="Toggle menu">☰</button>
       <div class="topbar__title">
         <h1>Departments</h1>
-        <p>Create and manage hospital departments.</p>
+        <p>Create and manage hospital departments with token initials.</p>
       </div>
       <div class="topbar__actions">
         <button class="icon-btn" aria-label="Notifications">🔔 <span class="icon-btn__badge">1</span></button>
@@ -67,7 +67,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Department</th><th>Description</th><th>In Queue</th><th>Avg. Wait Time</th><th>Status</th><th>Actions</th>
+            <th>Department</th><th>Initials</th><th>Description</th><th>In Queue</th><th>Avg. Wait Time</th><th>Status</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="departmentsTableBody"></tbody>
@@ -85,7 +85,11 @@
     </div>
     <form id="deptForm">
       <label>Department Name<input type="text" id="fieldName" required /></label>
-      <label>Description<input type="text" id="fieldDescription" required /></label>
+      <label>Initials (e.g. GM, LS, PED)
+        <input type="text" id="fieldInitials" maxlength="5" placeholder="e.g. GM" required style="text-transform:uppercase;" />
+        <span style="display:block;font-size:11px;color:#97a1b8;margin-top:4px;font-weight:400;">Used as token prefix. Example: GM001, LS007</span>
+      </label>
+      <label>Description<input type="text" id="fieldDescription" /></label>
       <label>Status
         <select id="fieldStatus">
           <option>Active</option>

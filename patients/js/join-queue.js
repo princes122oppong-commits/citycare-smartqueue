@@ -73,13 +73,32 @@ async function updateSummary() {
   if (aheadValue) aheadValue.textContent = `${peopleAhead} people`;
 }
 
+async function getDepartmentInitials(departmentId) {
+  try {
+    var result = await supabaseClient
+      .from("departments")
+      .select("initials")
+      .eq("id", departmentId)
+      .single();
+    if (!result.error && result.data && result.data.initials) {
+      return result.data.initials;
+    }
+  } catch (e) {
+    console.warn("Could not fetch department initials:", e.message);
+  }
+  return null;
+}
+
 function getDepartmentPrefix(departmentName) {
   const words = (departmentName || "G").split(/\s+/).filter(Boolean);
   return words[0]?.charAt(0).toUpperCase() || "Q";
 }
 
 async function generateTokenNumber(departmentId, departmentName) {
-  const prefix = getDepartmentPrefix(departmentName);
+  var prefix = await getDepartmentInitials(departmentId);
+  if (!prefix) {
+    prefix = getDepartmentPrefix(departmentName);
+  }
   const { count, error } = await supabaseClient
     .from("queue_entries")
     .select("*", { count: "exact", head: true })

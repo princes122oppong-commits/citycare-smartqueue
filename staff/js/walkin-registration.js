@@ -129,7 +129,25 @@ async function updateTokenPreview() {
 async function generateNextToken(departmentId, departmentName) {
   if (!supabaseClient || !departmentId) return null;
 
-  const prefix = getDepartmentPrefix(departmentName);
+  // Get department initials from the database
+  var prefix = "";
+  try {
+    var deptResult = await supabaseClient
+      .from("departments")
+      .select("initials")
+      .eq("id", departmentId)
+      .single();
+    if (!deptResult.error && deptResult.data && deptResult.data.initials) {
+      prefix = deptResult.data.initials;
+    }
+  } catch (e) {
+    console.warn("Could not fetch department initials:", e.message);
+  }
+
+  // Fallback to old method if no initials found
+  if (!prefix) {
+    prefix = getDepartmentPrefix(departmentName);
+  }
 
   // Count today's entries for this department to determine next sequence number
   const { count, error } = await supabaseClient
