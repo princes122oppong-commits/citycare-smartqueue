@@ -159,7 +159,7 @@ async function determineRedirectTarget(userId) {
     .eq("auth_uid", userId)
     .maybeSingle();
   if (!staffError && staff) {
-    return staff.role === "Administrator" ? "admin/html/admin-dashboard.html" : "staff/html/staff-dashboard.html";
+    return staff.role === "Administrator" ? "admin/html/admin-dashboard.html" : "receptionist/html/receptionist-dashboard.html";
   }
 
   const { data: userRow, error: userError } = await supabaseClient
@@ -170,7 +170,7 @@ async function determineRedirectTarget(userId) {
   if (!userError && userRow) {
     return userRow.role === "Administrator"
       ? "admin/html/admin-dashboard.html"
-      : "staff/html/staff-dashboard.html";
+      : "receptionist/html/receptionist-dashboard.html";
   }
 
   const { data: patient, error: patientError } = await supabaseClient
