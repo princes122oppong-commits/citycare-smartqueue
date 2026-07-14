@@ -129,40 +129,21 @@ async function updateTokenPreview() {
 async function generateNextToken(departmentId, departmentName) {
   if (!supabaseClient || !departmentId) return null;
 
-  // Get department initials from the database
-  var prefix = "";
   try {
-    var deptResult = await supabaseClient
-      .from("departments")
-      .select("initials")
-      .eq("id", departmentId)
-      .single();
-    if (!deptResult.error && deptResult.data && deptResult.data.initials) {
-      prefix = deptResult.data.initials;
+    // Use database function to atomically generate unique token
+    const { data, error } = await supabaseClient
+      .rpc('generate_next_queue_token', { p_department_id: departmentId });
+    
+    if (error) {
+      console.warn("Failed to generate token via database function:", error.message);
+      return null;
     }
+    
+    return data;
   } catch (e) {
-    console.warn("Could not fetch department initials:", e.message);
-  }
-
-  // Fallback to old method if no initials found
-  if (!prefix) {
-    prefix = getDepartmentPrefix(departmentName);
-  }
-
-  // Count today's entries for this department to determine next sequence number
-  const { count, error } = await supabaseClient
-    .from("queue_entries")
-    .select("*", { count: "exact", head: true })
-    .eq("department_id", departmentId)
-    .gte("joined_at", startOfTodayIso());
-
-  if (error) {
-    console.warn("Unable to count queue entries:", error.message);
+    console.warn("Could not generate token:", e.message);
     return null;
   }
-
-  const sequence = String((count || 0) + 1).padStart(3, "0");
-  return `${prefix}${sequence}`;
 }
 
 function getDepartmentPrefix(departmentName) {

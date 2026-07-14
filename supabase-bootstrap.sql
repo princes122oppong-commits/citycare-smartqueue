@@ -493,6 +493,57 @@ create index if not exists idx_notifications_patient on notifications(patient_id
 create index if not exists idx_staff_department on staff(department_id);
 
 /* ==========================================================================
+   FUNCTION: generate_next_queue_token()
+   Atomically generates the next unique token for a department
+   This prevents race conditions when multiple staff register patients simultaneously
+   ========================================================================== */
+
+create or replace function public.generate_next_queue_token(p_department_id int)
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_prefix text;
+  v_max_seq int;
+  v_next_token text;
+begin
+  -- Get department initials
+  select initials into v_prefix
+  from departments
+  where id = p_department_id;
+  
+  -- Fallback if no initials found
+  if v_prefix is null or v_prefix = '' then
+    select upper(left(name, 1)) into v_prefix
+    from departments
+    where id = p_department_id;
+  end if;
+  
+  if v_prefix is null or v_prefix = '' then
+    v_prefix := 'Q';
+  end if;
+  
+  -- Get the maximum sequence number for this department (across all time, not just today)
+  select coalesce(max(
+    case
+      when token_no ~ ('^' || v_prefix || '[0-9]+$') then
+        cast(substring(token_no from length(v_prefix) + 1) as int)
+      else 0
+    end
+  ), 0) into v_max_seq
+  from queue_entries
+  where department_id = p_department_id;
+  
+  -- Generate next token
+  v_next_token := v_prefix || lpad((v_max_seq + 1)::text, 3, '0');
+  
+  return v_next_token;
+end;
+$$;
+
+/* ==========================================================================
    RELOAD SCHEMA
    ========================================================================== */
 
