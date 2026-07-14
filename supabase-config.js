@@ -71,7 +71,7 @@ async function getCurrentStaffOrAdmin() {
   if (!user) return null;
 
   const staffQuery = await supabaseClient
-    .from("staff")
+    .from("receptionist")
     .select("*, department_id")
     .eq("auth_uid", user.id)
     .maybeSingle();
@@ -123,7 +123,7 @@ async function isCurrentUserAdministrator(userId) {
       .eq("auth_uid", userId)
       .maybeSingle(),
     supabaseClient
-      .from("staff")
+      .from("receptionist")
       .select("role, status")
       .eq("auth_uid", userId)
       .maybeSingle(),
@@ -154,7 +154,7 @@ async function determineRedirectTarget(userId) {
   if (!supabaseClient || !userId) return "patients/html/patients-dashboard.html";
 
   const { data: staff, error: staffError } = await supabaseClient
-    .from("staff")
+    .from("receptionist")
     .select("role")
     .eq("auth_uid", userId)
     .maybeSingle();

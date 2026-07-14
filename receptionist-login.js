@@ -16,7 +16,7 @@ toggleStaffPassword?.addEventListener("click", () => {
 
 async function findStaffProfile(userId, email) {
   const staffByAuth = await supabaseClient
-    .from("staff")
+    .from("receptionist")
     .select("id, full_name, email, role, status, auth_uid")
     .eq("auth_uid", userId)
     .maybeSingle();
@@ -36,14 +36,14 @@ async function findStaffProfile(userId, email) {
   }
 
   const staffByEmail = await supabaseClient
-    .from("staff")
+    .from("receptionist")
     .select("id, full_name, email, role, status, auth_uid")
     .eq("email", email)
     .maybeSingle();
 
   if (!staffByEmail.error && staffByEmail.data) {
     if (!staffByEmail.data.auth_uid) {
-      await supabaseClient.from("staff").update({ auth_uid: userId }).eq("id", staffByEmail.data.id);
+      await supabaseClient.from("receptionist").update({ auth_uid: userId }).eq("id", staffByEmail.data.id);
     }
     return { table: "staff", profile: staffByEmail.data };
   }
