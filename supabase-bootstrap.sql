@@ -2,7 +2,7 @@
 -- Run this in Supabase SQL Editor as a new migration.
 -- This is the single source of truth for schema + RLS policies.
 
-create extensi on if not exists pgcrypto;
+create extension if not exists pgcrypto;
 
 /* ==========================================================================
    TABLES
