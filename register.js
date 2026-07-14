@@ -236,54 +236,10 @@ form?.addEventListener("submit", async (e) => {
 
     if (wasExistingAccount) {
       alert("Your account already existed, so we signed you in and linked your profile.");
-      window.location.href = "login.html";
     } else {
-      // Show confirmation message
-      document.getElementById('registerForm').innerHTML = `
-        <div style="text-align:center; padding:40px 20px;">
-          <div style="font-size:64px; margin-bottom:20px;">📧</div>
-          <h2 style="color:var(--text-900); margin-bottom:12px;">Check Your Email</h2>
-          <p style="color:var(--text-600); font-size:14px; line-height:1.6; margin-bottom:24px;">
-            We've sent a confirmation link to:<br>
-            <strong>${escapeHtml(fields.email.value.trim())}</strong>
-          </p>
-          <p style="color:var(--text-600); font-size:13px; line-height:1.6; margin-bottom:32px;">
-            Please click the link in the email to verify your account before logging in.
-            The link will expire in 24 hours.
-          </p>
-          <div style="background:var(--blue-50); border:1px solid var(--blue-100); border-radius:var(--r-md); padding:16px; margin-bottom:24px;">
-            <p style="color:var(--blue-600); font-size:13px; font-weight:600; margin-bottom:8px;">Didn't receive the email?</p>
-            <button type="button" id="resendEmailBtn" style="background:var(--blue-600); color:#fff; border:none; border-radius:var(--r-sm); padding:10px 20px; font-size:13px; font-weight:600; cursor:pointer;">
-              Resend Confirmation Email
-            </button>
-          </div>
-          <a href="login.html" style="color:var(--blue-600); font-size:14px; font-weight:600;">Back to Login</a>
-        </div>
-      `;
-
-      // Add resend email functionality
-      const resendBtn = document.getElementById('resendEmailBtn');
-      if (resendBtn) {
-        resendBtn.addEventListener('click', async () => {
-          resendBtn.disabled = true;
-          resendBtn.textContent = 'Sending...';
-          
-          try {
-            await supabaseClient.auth.resend({
-              type: 'signup',
-              email: fields.email.value.trim()
-            });
-            alert('Confirmation email sent! Please check your inbox.');
-            resendBtn.textContent = 'Resend Confirmation Email';
-            resendBtn.disabled = false;
-          } catch (err) {
-            alert('Failed to resend email: ' + err.message);
-            resendBtn.textContent = 'Resend Confirmation Email';
-            resendBtn.disabled = false;
-          }
-        });
-      }
+      alert("Account created successfully! You can now log in.");
     }
+    window.location.href = "login.html";
   } catch (err) {
     console.error("Registration Error:", err);
 
