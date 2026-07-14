@@ -108,21 +108,6 @@ if (loginForm) {
   });
 }
 
-// --- Google sign-in ---
-var googleBtn = document.querySelector('.btn-google');
-if (googleBtn) {
-  googleBtn.addEventListener('click', async function() {
-    if (!supabaseClient) {
-      alert('Supabase is not configured.');
-      return;
-    }
-    var result = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
-    if (result.error) {
-      alert(result.error.message || 'Google sign-in failed.');
-    }
-  });
-}
-
 // --- Auto-redirect on page load if already authenticated ---
 document.addEventListener('DOMContentLoaded', function() {
   var params = new URLSearchParams(window.location.search);
