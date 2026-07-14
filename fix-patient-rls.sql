@@ -10,6 +10,7 @@ drop policy if exists "Patients can access own profile" on patients;
 drop policy if exists "Patients can manage own profile" on patients;
 
 -- Allow patients to insert their own profile during registration
+-- NOTE: auth_uid must be set to auth.uid() in the client code during insert
 create policy "Patients can insert own profile" on patients
   for insert with check (auth.uid() = auth_uid);
 
