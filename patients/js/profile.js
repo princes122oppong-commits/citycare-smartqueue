@@ -16,10 +16,8 @@ async function loadProfile() {
     return;
   }
 
-  // Get auth user for username
-  var authResult = await supabaseClient.auth.getUser();
-  var authUser = authResult.data?.user;
-  var username = authUser?.email?.split('@')[0] || 'user';
+  // Get auth user for username - use full name from patient record
+  var username = patient.full_name || 'Patient';
   var memberSince = patient.created_at ? new Date(patient.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
 
   // Personal information
