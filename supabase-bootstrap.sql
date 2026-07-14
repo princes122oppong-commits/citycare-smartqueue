@@ -13,6 +13,7 @@ create table if not exists departments (
   name text not null unique,
   description text,
   status text not null default 'Active',
+  initials text not null default '',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -59,7 +60,7 @@ create table if not exists appointments (
 
 create table if not exists queue_entries (
   id uuid primary key default gen_random_uuid(),
-  token_no text not null unique,
+  token_no text not null,
   patient_id uuid not null references patients(id),
   department_id int not null references departments(id) on delete cascade,
   appointment_id uuid null references appointments(id),
@@ -72,7 +73,8 @@ create table if not exists queue_entries (
   served_at timestamptz,
   expected_wait_minutes int default 0,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint queue_entries_dept_token_unique unique (department_id, token_no)
 );
 
 -- Safely add ON DELETE CASCADE to existing foreign key constraints
@@ -509,16 +511,15 @@ declare
   v_max_seq int;
   v_next_token text;
 begin
-  -- Get department initials
-  select initials into v_prefix
+  -- Lock the department row to prevent race conditions
+  select initials, name into v_prefix
   from departments
-  where id = p_department_id;
+  where id = p_department_id
+  for update;
   
   -- Fallback if no initials found
   if v_prefix is null or v_prefix = '' then
-    select upper(left(name, 1)) into v_prefix
-    from departments
-    where id = p_department_id;
+    v_prefix := upper(left(name, 1));
   end if;
   
   if v_prefix is null or v_prefix = '' then
