@@ -87,13 +87,22 @@ async function loadAppointments() {
 function subscribeToRealtimeUpdates() {
   if (!supabaseClient?.channel) return;
   
-  supabaseClient
-    .channel("staff-appointments-realtime")
-    .on("postgres_changes",
-      { event: "*", schema: "public", table: "appointments" },
-      function() { loadAppointments(); }
-    )
-    .subscribe();
+  try {
+    supabaseClient
+      .channel("staff-appointments-realtime")
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "appointments" },
+        function(payload) { 
+          console.log("Appointment change detected:", payload);
+          loadAppointments().catch(function(err) {
+            console.error("Error reloading appointments:", err);
+          });
+        }
+      )
+      .subscribe();
+  } catch (error) {
+    console.error("Failed to setup realtime subscription:", error);
+  }
 }
 
 function viewIcon() {
