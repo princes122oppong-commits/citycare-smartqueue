@@ -4,13 +4,13 @@
 -- ==========================================================================
 -- This deletes records for the 3 duplicate people from all tables:
 --   - auth.users (login accounts)
---   - public.users (admin/staff records)
---   - public.staff (staff records)
+--   - public.users (admin/receptionist records)
+--   - public.receptionist (receptionist records)
 -- Only the System Admin (oppongscarcity21@gmail.com) will remain.
 -- ==========================================================================
 
--- 1. Delete from public.staff
-DELETE FROM public.staff WHERE email IN (
+-- 1. Delete from public.receptionist
+DELETE FROM public.receptionist WHERE email IN (
   'amaniampongjoe21@gmail.com',
   'opokusilas@gmil.com',
   'oppongjosephattakorah21@gmail.com'
@@ -37,5 +37,5 @@ SELECT id, email FROM auth.users;
 SELECT '--- Remaining public.users ---' as info;
 SELECT id, email, role, status FROM public.users;
 
-SELECT '--- Remaining public.staff ---' as info;
-SELECT id, email, role, status FROM public.staff;
+SELECT '--- Remaining public.receptionist ---' as info;
+SELECT id, email, role, status FROM public.receptionist;

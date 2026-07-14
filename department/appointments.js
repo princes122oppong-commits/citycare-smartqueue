@@ -22,20 +22,20 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   var userId = authResult.data.user.id;
 
-  // Get staff profile with department
-  var staffResult = await supabaseClient
-    .from("staff")
+  // Get receptionist profile with department
+  var receptionistResult = await supabaseClient
+    .from("receptionist")
     .select("id, full_name, department_id, role")
     .eq("auth_uid", userId)
     .maybeSingle();
 
-  if (staffResult.error || !staffResult.data || !staffResult.data.department_id) {
+  if (receptionistResult.error || !receptionistResult.data || !receptionistResult.data.department_id) {
     await supabaseClient.auth.signOut();
     window.location.href = "../department-login.html";
     return;
   }
 
-  deptId = staffResult.data.department_id;
+  deptId = receptionistResult.data.department_id;
 
   // Get department name
   var deptResult = await supabaseClient

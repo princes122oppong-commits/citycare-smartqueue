@@ -1,6 +1,6 @@
 /* ==========================================================================
    department-login.js
-   Login handler for department staff (doctors, nurses).
+   Login handler for department receptionist (doctors, nurses).
    After login, redirects to department dashboard.
    ========================================================================== */
 
@@ -34,19 +34,19 @@ async function redirectIfDepartmentAuth() {
 
     var userId = authResult.data.user.id;
 
-    // Check if user is in staff table with a department_id
-    var staffResult = await supabaseClient
-      .from("staff")
+    // Check if user is in receptionist table with a department_id
+    var receptionistResult = await supabaseClient
+      .from("receptionist")
       .select("id, department_id, role")
       .eq("auth_uid", userId)
       .maybeSingle();
 
-    if (!staffResult.error && staffResult.data && staffResult.data.department_id) {
+    if (!receptionistResult.error && receptionistResult.data && receptionistResult.data.department_id) {
       window.location.href = "department/dashboard.html";
       return;
     }
 
-    // Not a department staff - sign out
+    // Not a department receptionist - sign out
     await supabaseClient.auth.signOut();
   } catch (err) {
     console.warn("Auto-redirect check failed:", err.message);
@@ -90,19 +90,19 @@ if (deptLoginForm) {
 
       var userId = authResult.data.user.id;
 
-      // Verify this user is in the staff table with a department_id
-      var staffResult = await supabaseClient
-        .from("staff")
+      // Verify this user is in the receptionist table with a department_id
+      var receptionistResult = await supabaseClient
+        .from("receptionist")
         .select("id, department_id, role, full_name")
         .eq("auth_uid", userId)
         .maybeSingle();
 
-      if (staffResult.error || !staffResult.data) {
+      if (receptionistResult.error || !receptionistResult.data) {
         await supabaseClient.auth.signOut();
-        throw new Error("No department staff account found for this email.");
+        throw new Error("No department receptionist account found for this email.");
       }
 
-      if (!staffResult.data.department_id) {
+      if (!receptionistResult.data.department_id) {
         await supabaseClient.auth.signOut();
         throw new Error("This account is not assigned to any department. Please contact an administrator.");
       }

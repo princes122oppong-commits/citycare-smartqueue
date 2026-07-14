@@ -53,13 +53,13 @@ async function getCurrentPatient() {
 
 async function determineRedirectTarget(userId) {
   if (!supabaseClient || !userId) return "patients/html/patients-dashboard.html";
-  var staffResult = await supabaseClient.from("staff").select("role").eq("auth_uid", userId).maybeSingle();
-  if (!staffResult.error && staffResult.data) {
-    return staffResult.data.role === "Administrator" ? "admin/html/admin-dashboard.html" : "staff/html/staff-dashboard.html";
+  var receptionistResult = await supabaseClient.from("receptionist").select("role").eq("auth_uid", userId).maybeSingle();
+  if (!receptionistResult.error && receptionistResult.data) {
+    return receptionistResult.data.role === "Administrator" ? "admin/html/admin-dashboard.html" : "receptionist/html/receptionist-dashboard.html";
   }
   var userResult = await supabaseClient.from("users").select("role").eq("auth_uid", userId).maybeSingle();
   if (!userResult.error && userResult.data) {
-    return userResult.data.role === "Administrator" ? "admin/html/admin-dashboard.html" : "staff/html/staff-dashboard.html";
+    return userResult.data.role === "Administrator" ? "admin/html/admin-dashboard.html" : "receptionist/html/receptionist-dashboard.html";
   }
   return "patients/html/patients-dashboard.html";
 }

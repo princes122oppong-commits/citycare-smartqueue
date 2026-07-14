@@ -40,12 +40,12 @@ function renderPatientsTable() {
   tbody.innerHTML = filteredRows.length
     ? filteredRows.map((row) => `
         <tr>
-          <td class="cell-primary">${escapeStaffHtml(row.id)}</td>
-          <td>${escapeStaffHtml(row.name)}</td>
-          <td>${escapeStaffHtml(row.phone)}</td>
-          <td>${escapeStaffHtml(row.department)}</td>
-          <td class="cell-muted">${escapeStaffHtml(row.lastVisit)}</td>
-          <td><span class="badge ${staffBadgeClass(row.status)}">${escapeStaffHtml(row.statusLabel)}</span></td>
+          <td class="cell-primary">${escapereceptionistHtml(row.id)}</td>
+          <td>${escapereceptionistHtml(row.name)}</td>
+          <td>${escapereceptionistHtml(row.phone)}</td>
+          <td>${escapereceptionistHtml(row.department)}</td>
+          <td class="cell-muted">${escapereceptionistHtml(row.lastVisit)}</td>
+          <td><span class="badge ${receptionistBadgeClass(row.status)}">${escapereceptionistHtml(row.statusLabel)}</span></td>
           <td><button class="icon-action" aria-label="View">${viewIcon()}</button></td>
         </tr>
       `).join("")
@@ -97,7 +97,7 @@ async function loadPatients() {
       name: row.full_name,
       phone: row.phone,
       department: departmentMap[latestQueue?.department_id] || "Unassigned",
-      lastVisit: formatStaffDate(latestQueue?.joined_at || row.created_at),
+      lastVisit: formatreceptionistDate(latestQueue?.joined_at || row.created_at),
       status: latestQueue?.status || "No Visit",
       statusLabel: latestQueue?.status ? String(latestQueue.status).replace(/_/g, " ").replace(/^./, (char) => char.toUpperCase()) : "No Visit",
     };

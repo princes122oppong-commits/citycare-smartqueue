@@ -77,16 +77,16 @@ function testToast() {
 }
 
 // ==========================================================================
-// Staff/Department: Subscribe to new queue entries and appointments
-// Call this on staff/department pages
+// receptionist/Department: Subscribe to new queue entries and appointments
+// Call this on receptionist/department pages
 // ==========================================================================
 
-function subscribeStaffNotifications(departmentId) {
+function subscribereceptionistNotifications(departmentId) {
   if (!supabaseClient || !departmentId) return;
 
   // Listen for new queue entries for this department
   supabaseClient
-    .channel('staff-queue-notifications')
+    .channel('receptionist-queue-notifications')
     .on('postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'queue_entries', filter: 'department_id=eq.' + departmentId },
       function(payload) {
@@ -102,7 +102,7 @@ function subscribeStaffNotifications(departmentId) {
 
   // Listen for new appointments for this department
   supabaseClient
-    .channel('staff-appointment-notifications')
+    .channel('receptionist-appointment-notifications')
     .on('postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'appointments', filter: 'department_id=eq.' + departmentId },
       function(payload) {
@@ -117,7 +117,7 @@ function subscribeStaffNotifications(departmentId) {
 
   // Listen for queue status changes (when patient is served)
   supabaseClient
-    .channel('staff-queue-status-notifications')
+    .channel('receptionist-queue-status-notifications')
     .on('postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'queue_entries', filter: 'department_id=eq.' + departmentId },
       function(payload) {

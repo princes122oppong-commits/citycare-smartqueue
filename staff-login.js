@@ -1,28 +1,28 @@
-const staffLoginForm = document.getElementById("staffLoginForm");
-const staffEmailInput = document.getElementById("staffEmail");
-const staffPasswordInput = document.getElementById("staffPassword");
-const staffEmailError = document.getElementById("staffEmailError");
-const staffPasswordError = document.getElementById("staffPasswordError");
-const toggleStaffPassword = document.getElementById("toggleStaffPassword");
+const receptionistLoginForm = document.getElementById("receptionistLoginForm");
+const receptionistEmailInput = document.getElementById("receptionistEmail");
+const receptionistPasswordInput = document.getElementById("receptionistPassword");
+const receptionistEmailError = document.getElementById("receptionistEmailError");
+const receptionistPasswordError = document.getElementById("receptionistPasswordError");
+const togglereceptionistPassword = document.getElementById("togglereceptionistPassword");
 
-const isValidStaffEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const isValidreceptionistEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-toggleStaffPassword?.addEventListener("click", () => {
-  const isHidden = staffPasswordInput.type === "password";
-  staffPasswordInput.type = isHidden ? "text" : "password";
-  toggleStaffPassword.textContent = isHidden ? "Hide" : "Show";
-  toggleStaffPassword.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+togglereceptionistPassword?.addEventListener("click", () => {
+  const isHidden = receptionistPasswordInput.type === "password";
+  receptionistPasswordInput.type = isHidden ? "text" : "password";
+  togglereceptionistPassword.textContent = isHidden ? "Hide" : "Show";
+  togglereceptionistPassword.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
 });
 
-async function findStaffProfile(userId, email) {
-  const staffByAuth = await supabaseClient
-    .from("staff")
+async function findreceptionistProfile(userId, email) {
+  const receptionistByAuth = await supabaseClient
+    .from("receptionist")
     .select("id, full_name, email, role, status, auth_uid")
     .eq("auth_uid", userId)
     .maybeSingle();
 
-  if (!staffByAuth.error && staffByAuth.data) {
-    return { table: "staff", profile: staffByAuth.data };
+  if (!receptionistByAuth.error && receptionistByAuth.data) {
+    return { table: "receptionist", profile: receptionistByAuth.data };
   }
 
   const userByAuth = await supabaseClient
@@ -31,55 +31,55 @@ async function findStaffProfile(userId, email) {
     .eq("auth_uid", userId)
     .maybeSingle();
 
-  if (!userByAuth.error && userByAuth.data && ["Staff", "Administrator"].includes(userByAuth.data.role)) {
+  if (!userByAuth.error && userByAuth.data && ["receptionist", "Administrator"].includes(userByAuth.data.role)) {
     return { table: "users", profile: userByAuth.data };
   }
 
-  const staffByEmail = await supabaseClient
-    .from("staff")
+  const receptionistByEmail = await supabaseClient
+    .from("receptionist")
     .select("id, full_name, email, role, status, auth_uid")
     .eq("email", email)
     .maybeSingle();
 
-  if (!staffByEmail.error && staffByEmail.data) {
-    if (!staffByEmail.data.auth_uid) {
-      await supabaseClient.from("staff").update({ auth_uid: userId }).eq("id", staffByEmail.data.id);
+  if (!receptionistByEmail.error && receptionistByEmail.data) {
+    if (!receptionistByEmail.data.auth_uid) {
+      await supabaseClient.from("receptionist").update({ auth_uid: userId }).eq("id", receptionistByEmail.data.id);
     }
-    return { table: "staff", profile: staffByEmail.data };
+    return { table: "receptionist", profile: receptionistByEmail.data };
   }
 
   return null;
 }
 
-async function redirectIfStaffAlreadySignedIn() {
+async function redirectIfreceptionistAlreadySignedIn() {
   if (!supabaseClient) return;
   const { data, error } = await supabaseClient.auth.getUser();
   if (error || !data.user) return;
-  const staff = await findStaffProfile(data.user.id, data.user.email);
-  if (staff) window.location.href = "staff/html/staff-dashboard.html";
+  const receptionist = await findreceptionistProfile(data.user.id, data.user.email);
+  if (receptionist) window.location.href = "receptionist/html/receptionist-dashboard.html";
 }
 
-staffLoginForm?.addEventListener("submit", async (event) => {
+receptionistLoginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  staffEmailError.textContent = "";
-  staffPasswordError.textContent = "";
+  receptionistEmailError.textContent = "";
+  receptionistPasswordError.textContent = "";
 
-  const email = staffEmailInput.value.trim();
+  const email = receptionistEmailInput.value.trim();
   let hasError = false;
 
-  if (!isValidStaffEmail(email)) {
-    staffEmailError.textContent = "Please enter a valid receptionist email address.";
+  if (!isValidreceptionistEmail(email)) {
+    receptionistEmailError.textContent = "Please enter a valid receptionist email address.";
     hasError = true;
   }
 
-  if (staffPasswordInput.value.length < 6) {
-    staffPasswordError.textContent = "Password must be at least 6 characters.";
+  if (receptionistPasswordInput.value.length < 6) {
+    receptionistPasswordError.textContent = "Password must be at least 6 characters.";
     hasError = true;
   }
 
   if (hasError) return;
 
-  const submitBtn = staffLoginForm.querySelector("button[type='submit']");
+  const submitBtn = receptionistLoginForm.querySelector("button[type='submit']");
   submitBtn.disabled = true;
   submitBtn.textContent = "Signing in...";
 
@@ -88,30 +88,30 @@ staffLoginForm?.addEventListener("submit", async (event) => {
 
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
-      password: staffPasswordInput.value,
+      password: receptionistPasswordInput.value,
     });
 
     if (error) throw error;
-    if (!data.user?.id) throw new Error("Unable to authenticate staff account.");
+    if (!data.user?.id) throw new Error("Unable to authenticate receptionist account.");
 
-    const staff = await findStaffProfile(data.user.id, email);
-    if (!staff) {
+    const receptionist = await findreceptionistProfile(data.user.id, email);
+    if (!receptionist) {
       await supabaseClient.auth.signOut();
       throw new Error("No receptionist profile is linked to this email.");
     }
 
-    if (staff.profile.status && staff.profile.status !== "Active") {
+    if (receptionist.profile.status && receptionist.profile.status !== "Active") {
       await supabaseClient.auth.signOut();
       throw new Error("This receptionist account is not active.");
     }
 
-    window.location.href = "staff/html/staff-dashboard.html";
+    window.location.href = "receptionist/html/receptionist-dashboard.html";
   } catch (error) {
-    staffPasswordError.textContent = error.message || "Unable to sign in. Please try again.";
+    receptionistPasswordError.textContent = error.message || "Unable to sign in. Please try again.";
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = "Login to Receptionist Portal";
   }
 });
 
-document.addEventListener("DOMContentLoaded", redirectIfStaffAlreadySignedIn);
+document.addEventListener("DOMContentLoaded", redirectIfreceptionistAlreadySignedIn);

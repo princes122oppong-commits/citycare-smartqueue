@@ -5,7 +5,7 @@
 
 /* ==========================================================================
    HELPER FUNCTION: is_administrator()
-   Checks both `users` and `staff` tables for admin role.
+   Checks both `users` and `receptionist` tables for admin role.
    ========================================================================== */
 
 create or replace function public.is_administrator()
@@ -22,7 +22,7 @@ as $$
       and role = 'Administrator'
   ) or exists (
     select 1
-    from public.staff
+    from public.receptionist
     where auth_uid = auth.uid()
       and role = 'Administrator'
   );
@@ -52,9 +52,9 @@ alter table patients enable row level security;
 drop policy if exists "Patients can access own profile" on patients;
 drop policy if exists "Patients can manage own profile" on patients;
 drop policy if exists "Patients can insert own profile" on patients;
-drop policy if exists "Staff can insert patient profiles" on patients;
-drop policy if exists "Staff can select patient profiles" on patients;
-drop policy if exists "Staff can update patient profiles" on patients;
+drop policy if exists "receptionist can insert patient profiles" on patients;
+drop policy if exists "receptionist can select patient profiles" on patients;
+drop policy if exists "receptionist can update patient profiles" on patients;
 drop policy if exists "Administrators can select patient profiles" on patients;
 drop policy if exists "Administrators can update patient profiles" on patients;
 drop policy if exists "Administrators can delete patient profiles" on patients;
@@ -67,20 +67,20 @@ create policy "Patients can manage own profile" on patients
 create policy "Patients can insert own profile" on patients
   for insert with check (auth.uid() = auth_uid);
 
--- Staff policies (needed for walk-in registration and department portal)
-create policy "Staff can insert patient profiles" on patients
+-- receptionist policies (needed for walk-in registration and department portal)
+create policy "receptionist can insert patient profiles" on patients
   for insert with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
-create policy "Staff can select patient profiles" on patients
+create policy "receptionist can select patient profiles" on patients
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
-create policy "Staff can update patient profiles" on patients
+create policy "receptionist can update patient profiles" on patients
   for update using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   ) with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
 
 create policy "Administrators can select patient profiles" on patients
@@ -91,36 +91,36 @@ create policy "Administrators can update patient profiles" on patients
 create policy "Administrators can delete patient profiles" on patients
   for delete using (public.is_administrator());
 
--- ==================== STAFF ====================
-alter table staff enable row level security;
+-- ==================== receptionist ====================
+alter table receptionist enable row level security;
 
-drop policy if exists "Staff can access own record" on staff;
-drop policy if exists "Staff can access unlinked own email record" on staff;
-drop policy if exists "Staff can update own record" on staff;
-drop policy if exists "Staff can claim unlinked own email record" on staff;
-drop policy if exists "Administrators can select staff records" on staff;
-drop policy if exists "Administrators can insert staff records" on staff;
-drop policy if exists "Administrators can update staff records" on staff;
-drop policy if exists "Administrators can delete staff records" on staff;
+drop policy if exists "receptionist can access own record" on receptionist;
+drop policy if exists "receptionist can access unlinked own email record" on receptionist;
+drop policy if exists "receptionist can update own record" on receptionist;
+drop policy if exists "receptionist can claim unlinked own email record" on receptionist;
+drop policy if exists "Administrators can select receptionist records" on receptionist;
+drop policy if exists "Administrators can insert receptionist records" on receptionist;
+drop policy if exists "Administrators can update receptionist records" on receptionist;
+drop policy if exists "Administrators can delete receptionist records" on receptionist;
 
-create policy "Staff can access own record" on staff
+create policy "receptionist can access own record" on receptionist
   for select using (auth.uid() = auth_uid);
-create policy "Staff can access unlinked own email record" on staff
+create policy "receptionist can access unlinked own email record" on receptionist
   for select using (auth_uid is null and lower(email) = lower(auth.jwt() ->> 'email'));
-create policy "Staff can update own record" on staff
+create policy "receptionist can update own record" on receptionist
   for update using (auth.uid() = auth_uid)
   with check (auth.uid() = auth_uid);
-create policy "Staff can claim unlinked own email record" on staff
+create policy "receptionist can claim unlinked own email record" on receptionist
   for update using (auth_uid is null and lower(email) = lower(auth.jwt() ->> 'email'))
   with check (auth_uid = auth.uid() and lower(email) = lower(auth.jwt() ->> 'email'));
-create policy "Administrators can select staff records" on staff
+create policy "Administrators can select receptionist records" on receptionist
   for select using (public.is_administrator());
-create policy "Administrators can insert staff records" on staff
+create policy "Administrators can insert receptionist records" on receptionist
   for insert with check (public.is_administrator());
-create policy "Administrators can update staff records" on staff
+create policy "Administrators can update receptionist records" on receptionist
   for update using (public.is_administrator())
   with check (public.is_administrator());
-create policy "Administrators can delete staff records" on staff
+create policy "Administrators can delete receptionist records" on receptionist
   for delete using (public.is_administrator());
 
 -- ==================== APPOINTMENTS ====================
@@ -130,7 +130,7 @@ drop policy if exists "Patients can access own appointments" on appointments;
 drop policy if exists "Patients can insert own appointments" on appointments;
 drop policy if exists "Patients can update own appointments" on appointments;
 drop policy if exists "Patients can delete own appointments" on appointments;
-drop policy if exists "Staff can access department and assigned appointments" on appointments;
+drop policy if exists "receptionist can access department and assigned appointments" on appointments;
 drop policy if exists "Administrators can select appointments" on appointments;
 drop policy if exists "Administrators can insert appointments" on appointments;
 drop policy if exists "Administrators can update appointments" on appointments;
@@ -154,9 +154,9 @@ create policy "Patients can delete own appointments" on appointments
   for delete using (
     exists (select 1 from patients p where p.id = appointments.patient_id and p.auth_uid = auth.uid())
   );
-create policy "Staff can access department and assigned appointments" on appointments
+create policy "receptionist can access department and assigned appointments" on appointments
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
 create policy "Administrators can select appointments" on appointments
   for select using (public.is_administrator());
@@ -173,9 +173,9 @@ alter table queue_entries enable row level security;
 
 drop policy if exists "Patients can access own queue entries" on queue_entries;
 drop policy if exists "Patients can insert own queue entries" on queue_entries;
-drop policy if exists "Staff can access department queue entries" on queue_entries;
-drop policy if exists "Staff can insert queue entries" on queue_entries;
-drop policy if exists "Staff can update queue entries" on queue_entries;
+drop policy if exists "receptionist can access department queue entries" on queue_entries;
+drop policy if exists "receptionist can insert queue entries" on queue_entries;
+drop policy if exists "receptionist can update queue entries" on queue_entries;
 drop policy if exists "Administrators can select queue entries" on queue_entries;
 drop policy if exists "Administrators can insert queue entries" on queue_entries;
 drop policy if exists "Administrators can update queue entries" on queue_entries;
@@ -190,20 +190,20 @@ create policy "Patients can insert own queue entries" on queue_entries
     exists (select 1 from patients p where p.id = queue_entries.patient_id and p.auth_uid = auth.uid())
   );
 
--- Staff/Department policies
-create policy "Staff can access department queue entries" on queue_entries
+-- receptionist/Department policies
+create policy "receptionist can access department queue entries" on queue_entries
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid() and (s.id = queue_entries.staff_id or s.department_id = queue_entries.department_id))
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid() and (s.id = queue_entries.receptionist_id or s.department_id = queue_entries.department_id))
   );
-create policy "Staff can insert queue entries" on queue_entries
+create policy "receptionist can insert queue entries" on queue_entries
   for insert with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
-create policy "Staff can update queue entries" on queue_entries
+create policy "receptionist can update queue entries" on queue_entries
   for update using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid() and (s.id = queue_entries.staff_id or s.department_id = queue_entries.department_id))
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid() and (s.id = queue_entries.receptionist_id or s.department_id = queue_entries.department_id))
   ) with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
 
 create policy "Administrators can select queue entries" on queue_entries

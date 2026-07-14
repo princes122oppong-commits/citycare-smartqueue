@@ -5,7 +5,7 @@ A web-based queue management system for hospitals and clinics, built with Supaba
 ## Features
 
 - **Patient Portal**: Join queue, view queue status, book appointments
-- **Staff Dashboard**: Manage active queues, process walk-in registrations, view patient records
+- **receptionist Dashboard**: Manage active queues, process walk-in registrations, view patient records
 - **Admin Panel**: Full system administration, user management, department configuration, reports
 
 ## Technology Stack
@@ -70,7 +70,7 @@ Then open http://localhost:8080 in your browser.
 ├── login.html              # Unified login page
 ├── register.html           # Patient registration
 ├── admin-login.html        # Admin login
-├── staff-login.html        # Staff login
+├── receptionist-login.html        # receptionist login
 ├── supabase-config.js      # Supabase client (shared)
 ├── supabase-config.example.js  # Credential template
 ├── supabase-bootstrap.sql  # Basic schema migration
@@ -81,10 +81,10 @@ Then open http://localhost:8080 in your browser.
 │   ├── html/               # Admin pages
 │   └── js/                 # Admin scripts
 │
-├── staff/                  # Staff portal
+├── receptionist/                  # receptionist portal
 │   ├── css/
-│   ├── html/               # Staff pages
-│   └── js/                 # Staff scripts
+│   ├── html/               # receptionist pages
+│   └── js/                 # receptionist scripts
 │
 ├── patients/               # Patient portal
 │   ├── css/
@@ -98,19 +98,19 @@ Then open http://localhost:8080 in your browser.
 
 ## Authentication Flow
 
-1. Users login via `login.html` (patients) or `staff-login.html` / `admin-login.html`
-2. The system determines the user's role (patient, staff, admin)
+1. Users login via `login.html` (patients) or `receptionist-login.html` / `admin-login.html`
+2. The system determines the user's role (patient, receptionist, admin)
 3. Users are redirected to their respective dashboard
 4. Each portal has its own auth guard:
    - Admin pages check `ensureAdminSession()`
-   - Staff pages check `ensureStaffSession()`
+   - receptionist pages check `ensurereceptionistSession()`
    - Patient pages verify patient profile exists
 
 ## Security Notes
 
 - **Row Level Security**: `supabase-rls.sql` contains comprehensive RLS policies
   - Patients can only access their own data
-  - Staff can access department-related data
+  - receptionist can access department-related data
   - Administrators have full access
 - **XSS Prevention**: All user-generated content is HTML-escaped before rendering
 - **Auth Guards**: Each portal verifies authentication and authorization on every page load
@@ -136,5 +136,5 @@ npx vite
 ## Troubleshooting
 
 - **"Supabase SDK not found"**: Ensure the Supabase CDN script is loaded before `supabase-config.js`
-- **Login fails**: Check that the user exists in both Supabase Auth and the corresponding profile table (patients, staff, or users)
+- **Login fails**: Check that the user exists in both Supabase Auth and the corresponding profile table (patients, receptionist, or users)
 - **Blank pages**: Check browser console for errors; ensure all script dependencies are loading in order

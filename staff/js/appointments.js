@@ -41,11 +41,11 @@ function renderAppointmentsTable() {
   tbody.innerHTML = filteredRows.length
     ? filteredRows.map((row) => `
         <tr>
-          <td class="cell-primary">${escapeStaffHtml(row.id)}</td>
-          <td>${escapeStaffHtml(row.patientName)}</td>
-          <td>${escapeStaffHtml(row.department)}</td>
-          <td class="cell-muted">${escapeStaffHtml(row.scheduledAt)}</td>
-          <td><span class="badge ${staffBadgeClass(row.status)}">${escapeStaffHtml(row.statusLabel)}</span></td>
+          <td class="cell-primary">${escapereceptionistHtml(row.id)}</td>
+          <td>${escapereceptionistHtml(row.patientName)}</td>
+          <td>${escapereceptionistHtml(row.department)}</td>
+          <td class="cell-muted">${escapereceptionistHtml(row.scheduledAt)}</td>
+          <td><span class="badge ${receptionistBadgeClass(row.status)}">${escapereceptionistHtml(row.statusLabel)}</span></td>
           <td><button class="icon-action" aria-label="View">${viewIcon()}</button></td>
         </tr>
       `).join("")
@@ -86,7 +86,7 @@ async function loadAppointments() {
     id: row.id,
     patientName: patientMap[row.patient_id] || "Unknown patient",
     department: departmentMap[row.department_id] || "Unassigned",
-    scheduledAt: formatStaffDateTime(row.scheduled_at),
+    scheduledAt: formatreceptionistDateTime(row.scheduled_at),
     status: row.status || "pending",
     statusLabel: String(row.status || "pending").replace(/^./, (char) => char.toUpperCase()),
   }));
@@ -99,7 +99,7 @@ function subscribeToRealtimeUpdates() {
   
   try {
     supabaseClient
-      .channel("staff-appointments-realtime")
+      .channel("receptionist-appointments-realtime")
       .on("postgres_changes",
         { event: "*", schema: "public", table: "appointments" },
         function(payload) { 

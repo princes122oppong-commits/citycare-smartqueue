@@ -31,12 +31,12 @@ create table if not exists patients (
   updated_at timestamptz not null default now()
 );
 
-create table if not exists staff (
+create table if not exists receptionist (
   id uuid primary key default gen_random_uuid(),
   auth_uid uuid null references auth.users(id),
   full_name text not null,
   email text not null unique,
-  role text not null check (role in ('Doctor','Nurse','Staff','Administrator')),
+  role text not null check (role in ('Doctor','Nurse','receptionist','Administrator')),
   department_id int null references departments(id),
   phone text,
   status text not null default 'Active',
@@ -48,7 +48,7 @@ create table if not exists appointments (
   id uuid primary key default gen_random_uuid(),
   patient_id uuid not null references patients(id),
   department_id int not null references departments(id),
-  doctor_id uuid null references staff(id),
+  doctor_id uuid null references receptionist(id),
   scheduled_at timestamptz not null,
   status text not null default 'Pending' check (status in ('Pending','Confirmed','Cancelled','Completed','Rescheduled')),
   type text not null default 'Consultation',
@@ -64,7 +64,7 @@ create table if not exists queue_entries (
   patient_id uuid not null references patients(id),
   department_id int not null references departments(id) on delete cascade,
   appointment_id uuid null references appointments(id),
-  staff_id uuid null references staff(id),
+  receptionist_id uuid null references receptionist(id),
   status text not null default 'waiting' check (status in ('waiting','now_serving','served','skipped','cancelled')),
   type text not null default 'walk-in' check (type in ('walk-in','appointment')),
   reason text,
@@ -157,7 +157,7 @@ create table if not exists users (
   auth_uid uuid null references auth.users(id),
   full_name text not null,
   email text not null unique,
-  role text not null check (role in ('Staff','Administrator')),
+  role text not null check (role in ('receptionist','Administrator')),
   status text not null default 'Active',
   joined_at timestamptz not null default now(),
   department_id int null references departments(id),
@@ -183,7 +183,7 @@ insert into settings (id) values (1)
 
 /* ==========================================================================
    HELPER FUNCTION: is_administrator()
-   Checks both `users` and `staff` tables for admin role.
+   Checks both `users` and `receptionist` tables for admin role.
    ========================================================================== */
 
 create or replace function public.is_administrator()
@@ -200,7 +200,7 @@ as $$
       and role = 'Administrator'
   ) or exists (
     select 1
-    from public.staff
+    from public.receptionist
     where auth_uid = auth.uid()
       and role = 'Administrator'
   );
@@ -270,19 +270,19 @@ create policy "Patients can manage own profile" on patients
   with check (auth.uid() = auth_uid);
 create policy "Patients can insert own profile" on patients
   for insert with check (auth.uid() = auth_uid);
-create policy "Staff can insert patient profiles" on patients
+create policy "receptionist can insert patient profiles" on patients
   for insert with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
-create policy "Staff can select patient profiles" on patients
+create policy "receptionist can select patient profiles" on patients
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
-create policy "Staff can update patient profiles" on patients
+create policy "receptionist can update patient profiles" on patients
   for update using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   ) with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
 create policy "Administrators can select patient profiles" on patients
   for select using (public.is_administrator());
@@ -292,36 +292,36 @@ create policy "Administrators can update patient profiles" on patients
 create policy "Administrators can delete patient profiles" on patients
   for delete using (public.is_administrator());
 
--- ==================== STAFF ====================
-alter table staff enable row level security;
+-- ==================== receptionist ====================
+alter table receptionist enable row level security;
 
-drop policy if exists "Staff can access own record" on staff;
-drop policy if exists "Staff can access unlinked own email record" on staff;
-drop policy if exists "Staff can update own record" on staff;
-drop policy if exists "Staff can claim unlinked own email record" on staff;
-drop policy if exists "Administrators can select staff records" on staff;
-drop policy if exists "Administrators can insert staff records" on staff;
-drop policy if exists "Administrators can update staff records" on staff;
-drop policy if exists "Administrators can delete staff records" on staff;
+drop policy if exists "receptionist can access own record" on receptionist;
+drop policy if exists "receptionist can access unlinked own email record" on receptionist;
+drop policy if exists "receptionist can update own record" on receptionist;
+drop policy if exists "receptionist can claim unlinked own email record" on receptionist;
+drop policy if exists "Administrators can select receptionist records" on receptionist;
+drop policy if exists "Administrators can insert receptionist records" on receptionist;
+drop policy if exists "Administrators can update receptionist records" on receptionist;
+drop policy if exists "Administrators can delete receptionist records" on receptionist;
 
-create policy "Staff can access own record" on staff
+create policy "receptionist can access own record" on receptionist
   for select using (auth.uid() = auth_uid);
-create policy "Staff can access unlinked own email record" on staff
+create policy "receptionist can access unlinked own email record" on receptionist
   for select using (auth_uid is null and lower(email) = lower(auth.jwt() ->> 'email'));
-create policy "Staff can update own record" on staff
+create policy "receptionist can update own record" on receptionist
   for update using (auth.uid() = auth_uid)
   with check (auth.uid() = auth_uid);
-create policy "Staff can claim unlinked own email record" on staff
+create policy "receptionist can claim unlinked own email record" on receptionist
   for update using (auth_uid is null and lower(email) = lower(auth.jwt() ->> 'email'))
   with check (auth_uid = auth.uid() and lower(email) = lower(auth.jwt() ->> 'email'));
-create policy "Administrators can select staff records" on staff
+create policy "Administrators can select receptionist records" on receptionist
   for select using (public.is_administrator());
-create policy "Administrators can insert staff records" on staff
+create policy "Administrators can insert receptionist records" on receptionist
   for insert with check (public.is_administrator());
-create policy "Administrators can update staff records" on staff
+create policy "Administrators can update receptionist records" on receptionist
   for update using (public.is_administrator())
   with check (public.is_administrator());
-create policy "Administrators can delete staff records" on staff
+create policy "Administrators can delete receptionist records" on receptionist
   for delete using (public.is_administrator());
 
 -- ==================== APPOINTMENTS ====================
@@ -331,7 +331,7 @@ drop policy if exists "Patients can access own appointments" on appointments;
 drop policy if exists "Patients can insert own appointments" on appointments;
 drop policy if exists "Patients can update own appointments" on appointments;
 drop policy if exists "Patients can delete own appointments" on appointments;
-drop policy if exists "Staff can access department and assigned appointments" on appointments;
+drop policy if exists "receptionist can access department and assigned appointments" on appointments;
 drop policy if exists "Administrators can select appointments" on appointments;
 drop policy if exists "Administrators can insert appointments" on appointments;
 drop policy if exists "Administrators can update appointments" on appointments;
@@ -355,9 +355,9 @@ create policy "Patients can delete own appointments" on appointments
   for delete using (
     exists (select 1 from patients p where p.id = appointments.patient_id and p.auth_uid = auth.uid())
   );
-create policy "Staff can access department and assigned appointments" on appointments
+create policy "receptionist can access department and assigned appointments" on appointments
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
 create policy "Administrators can select appointments" on appointments
   for select using (public.is_administrator());
@@ -374,7 +374,7 @@ alter table queue_entries enable row level security;
 
 drop policy if exists "Patients can access own queue entries" on queue_entries;
 drop policy if exists "Patients can insert own queue entries" on queue_entries;
-drop policy if exists "Staff can access department queue entries" on queue_entries;
+drop policy if exists "receptionist can access department queue entries" on queue_entries;
 drop policy if exists "Administrators can select queue entries" on queue_entries;
 drop policy if exists "Administrators can insert queue entries" on queue_entries;
 drop policy if exists "Administrators can update queue entries" on queue_entries;
@@ -388,19 +388,19 @@ create policy "Patients can insert own queue entries" on queue_entries
   for insert with check (
     exists (select 1 from patients p where p.id = queue_entries.patient_id and p.auth_uid = auth.uid())
   );
-create policy "Staff can access department queue entries" on queue_entries
+create policy "receptionist can access department queue entries" on queue_entries
   for select using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid() and (s.id = queue_entries.staff_id or s.department_id = queue_entries.department_id))
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid() and (s.id = queue_entries.receptionist_id or s.department_id = queue_entries.department_id))
   );
-create policy "Staff can insert queue entries" on queue_entries
+create policy "receptionist can insert queue entries" on queue_entries
   for insert with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
-create policy "Staff can update queue entries" on queue_entries
+create policy "receptionist can update queue entries" on queue_entries
   for update using (
-    exists (select 1 from staff s where s.auth_uid = auth.uid() and (s.id = queue_entries.staff_id or s.department_id = queue_entries.department_id))
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid() and (s.id = queue_entries.receptionist_id or s.department_id = queue_entries.department_id))
   ) with check (
-    exists (select 1 from staff s where s.auth_uid = auth.uid())
+    exists (select 1 from receptionist s where s.auth_uid = auth.uid())
   );
 create policy "Administrators can select queue entries" on queue_entries
   for select using (public.is_administrator());
@@ -492,7 +492,7 @@ create index if not exists idx_queue_entries_department on queue_entries(departm
 create index if not exists idx_appointments_patient on appointments(patient_id);
 create index if not exists idx_appointments_scheduled on appointments(scheduled_at);
 create index if not exists idx_notifications_patient on notifications(patient_id);
-create index if not exists idx_staff_department on staff(department_id);
+create index if not exists idx_receptionist_department on receptionist(department_id);
 
 /* ==========================================================================
    QUEUE SEQUENCES TABLE
@@ -511,7 +511,7 @@ create index if not exists idx_queue_sequences_department on queue_sequences(dep
 /* ==========================================================================
    FUNCTION: generate_next_queue_token()
    Atomically generates the next unique token for a department
-   This prevents race conditions when multiple staff register patients simultaneously
+   This prevents race conditions when multiple receptionist register patients simultaneously
    ========================================================================== */
 
 create or replace function public.generate_next_queue_token(p_department_id int)

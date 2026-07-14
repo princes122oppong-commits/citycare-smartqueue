@@ -7,11 +7,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="login.css">
-<link rel="stylesheet" href="staff-login.css">
+<link rel="stylesheet" href="receptionist-login.css">
 </head>
 <body>
 
-<div class="auth-page staff-auth-page">
+<div class="auth-page receptionist-auth-page">
   <div class="auth-visual">
     <div class="visual-scene" aria-hidden="true">
       <img class="login-image" src="images (3).jpg" alt="CityCare Hospital receptionist login">
@@ -25,24 +25,24 @@
         <span class="brand-name">SmartQueue<br>Health</span>
       </a>
 
-      <div class="staff-pill">Receptionist Portal</div>
+      <div class="receptionist-pill">Receptionist Portal</div>
       <h1>Receptionist Sign In</h1>
       <p class="subtitle">Use your receptionist email and password to access patient flow tools.</p>
 
-      <form id="staffLoginForm" novalidate>
+      <form id="receptionistLoginForm" novalidate>
         <div class="field">
-          <label for="staffEmail">Receptionist Email</label>
-          <input type="email" id="staffEmail" name="email" placeholder="receptionist@clinic.com" autocomplete="email" required>
-          <span class="field-error" id="staffEmailError"></span>
+          <label for="receptionistEmail">Receptionist Email</label>
+          <input type="email" id="receptionistEmail" name="email" placeholder="receptionist@clinic.com" autocomplete="email" required>
+          <span class="field-error" id="receptionistEmailError"></span>
         </div>
 
         <div class="field">
-          <label for="staffPassword">Password</label>
+          <label for="receptionistPassword">Password</label>
           <div class="password-wrap">
-            <input type="password" id="staffPassword" name="password" placeholder="Enter your password" autocomplete="current-password" required>
-            <button type="button" class="toggle-visibility" id="toggleStaffPassword" aria-label="Show password">Show</button>
+            <input type="password" id="receptionistPassword" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="toggle-visibility" id="togglereceptionistPassword" aria-label="Show password">Show</button>
           </div>
-          <span class="field-error" id="staffPasswordError"></span>
+          <span class="field-error" id="receptionistPasswordError"></span>
         </div>
 
         <button type="submit" class="btn btn-primary btn-block">Login to Receptionist Portal</button>
@@ -54,6 +54,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="staff-login.js"></script>
+<script src="receptionist-login.js"></script>
 </body>
 </html>

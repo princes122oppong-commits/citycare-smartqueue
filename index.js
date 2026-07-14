@@ -35,10 +35,10 @@ const setActiveLink = () => {
 window.addEventListener('scroll', setActiveLink);
 setActiveLink();
 
-// Always route Staff Portal through the staff login screen first.
-document.querySelector('.portal-staff')?.addEventListener('click', (e) => {
+// Always route receptionist Portal through the receptionist login screen first.
+document.querySelector('.portal-receptionist')?.addEventListener('click', (e) => {
   e.preventDefault();
-  window.location.href = 'staff-login.html';
+  window.location.href = 'receptionist-login.html';
 });
 
 // "Join Queue" routes patients to the queue status page (auth guard on that page).

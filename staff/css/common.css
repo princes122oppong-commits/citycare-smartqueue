@@ -1,7 +1,7 @@
 /* ==========================================================================
-   Hospital Smart Queue — Staff Panel
+   Hospital Smart Queue — receptionist Panel
    Shared tokens + layout (sidebar, topbar, cards, tables, badges, buttons)
-   Loaded by every staff page. Page-specific styles live in <page>.css
+   Loaded by every receptionist page. Page-specific styles live in <page>.css
    ========================================================================== */
 
 :root {

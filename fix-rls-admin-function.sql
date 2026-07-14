@@ -22,7 +22,7 @@ AS $$
       AND status = 'Active'
   ) OR EXISTS (
     SELECT 1
-    FROM public.staff
+    FROM public.receptionist
     WHERE auth_uid = auth.uid()
       AND role = 'Administrator'
       AND status = 'Active'
@@ -45,15 +45,15 @@ CREATE POLICY "Administrators can update patient profiles" ON patients
 CREATE POLICY "Administrators can delete patient profiles" ON patients
   FOR DELETE USING (public.is_administrator());
 
--- ==================== STAFF ====================
-CREATE POLICY "Administrators can select staff records" ON staff
+-- ==================== receptionist ====================
+CREATE POLICY "Administrators can select receptionist records" ON receptionist
   FOR SELECT USING (public.is_administrator());
-CREATE POLICY "Administrators can insert staff records" ON staff
+CREATE POLICY "Administrators can insert receptionist records" ON receptionist
   FOR INSERT WITH CHECK (public.is_administrator());
-CREATE POLICY "Administrators can update staff records" ON staff
+CREATE POLICY "Administrators can update receptionist records" ON receptionist
   FOR UPDATE USING (public.is_administrator())
   WITH CHECK (public.is_administrator());
-CREATE POLICY "Administrators can delete staff records" ON staff
+CREATE POLICY "Administrators can delete receptionist records" ON receptionist
   FOR DELETE USING (public.is_administrator());
 
 -- ==================== APPOINTMENTS ====================

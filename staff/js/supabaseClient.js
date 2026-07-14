@@ -1,18 +1,18 @@
 /* ==========================================================================
-   Shared Supabase helpers for staff pages.
+   Shared Supabase helpers for receptionist pages.
    The root ../../supabase-config.js must be loaded before this file.
    ========================================================================== */
 
 if (typeof supabaseClient === "undefined" || !supabaseClient) {
-  console.warn("Shared supabaseClient not found. Ensure ../../supabase-config.js is loaded before staff helpers.");
+  console.warn("Shared supabaseClient not found. Ensure ../../supabase-config.js is loaded before receptionist helpers.");
 }
 
-async function ensureStaffSession() {
+async function ensurereceptionistSession() {
   if (!supabaseClient) return;
 
-  const loginPath = new URL("../../staff-login.html", window.location.href).href;
+  const loginPath = new URL("../../receptionist-login.html", window.location.href).href;
   const currentPath = window.location.pathname.toLowerCase();
-  if (currentPath.endsWith("/staff-login.html")) return;
+  if (currentPath.endsWith("/receptionist-login.html")) return;
 
   async function attemptSessionCheck(retriesLeft) {
     let userId;
@@ -51,10 +51,10 @@ async function ensureStaffSession() {
       }
 
       // Store userId for the rest of the function
-      window.__staffUserId = userId;
+      window.__receptionistUserId = userId;
       return;
     } catch (err) {
-      console.error("Staff session check failed:", err);
+      console.error("receptionist session check failed:", err);
       if (retriesLeft > 0) {
         return new Promise(function(resolve) {
           setTimeout(function() { resolve(attemptSessionCheck(retriesLeft - 1)); }, 1000);
@@ -67,19 +67,19 @@ async function ensureStaffSession() {
   // Start with 3 retries (about 3 seconds total)
   await attemptSessionCheck(3);
 
-  var uid = window.__staffUserId;
+  var uid = window.__receptionistUserId;
 
-  // Check staff table first
+  // Check receptionist table first
   try {
-    const { data: staffProfile, error: staffError } = await supabaseClient
-      .from("staff")
+    const { data: receptionistProfile, error: receptionistError } = await supabaseClient
+      .from("receptionist")
       .select("id, status")
       .eq("auth_uid", uid)
       .maybeSingle();
 
-    if (!staffError && staffProfile && staffProfile.status !== "Inactive") return;
+    if (!receptionistError && receptionistProfile && receptionistProfile.status !== "Inactive") return;
   } catch (e) {
-    console.warn("Staff table check failed:", e.message);
+    console.warn("receptionist table check failed:", e.message);
   }
 
   // Fall back to users table
@@ -93,7 +93,7 @@ async function ensureStaffSession() {
     if (
       !userError &&
       userProfile &&
-      ["Staff", "Administrator"].includes(userProfile.role) &&
+      ["receptionist", "Administrator"].includes(userProfile.role) &&
       userProfile.status !== "Inactive"
     ) {
       return;
@@ -107,16 +107,16 @@ async function ensureStaffSession() {
   window.location.href = loginPath;
 }
 
-function escapeStaffHtml(value) {
+function escapereceptionistHtml(value) {
   return typeof escapeHtml === "function" ? escapeHtml(value) : String(value ?? "");
 }
 
-function formatStaffDate(value) {
+function formatreceptionistDate(value) {
   if (!value) return "";
   return new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-function formatStaffDateTime(value) {
+function formatreceptionistDateTime(value) {
   if (!value) return "";
   return new Date(value).toLocaleString("en-US", {
     month: "short",
@@ -132,7 +132,7 @@ function minutesSince(value) {
   return Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 60000));
 }
 
-function staffBadgeClass(status) {
+function receptionistBadgeClass(status) {
   const normalized = String(status || "").toLowerCase();
   if (["served", "completed", "confirmed", "active"].includes(normalized)) return "green";
   if (["waiting", "pending"].includes(normalized)) return "amber";
@@ -141,26 +141,26 @@ function staffBadgeClass(status) {
   return "blue";
 }
 
-async function getCurrentStaffProfile() {
+async function getCurrentreceptionistProfile() {
   if (!supabaseClient) return null;
   const { data: authData, error } = await supabaseClient.auth.getUser();
   if (error || !authData.user) return null;
 
-  // Try staff table first
+  // Try receptionist table first
   try {
-    const staffResult = await supabaseClient
-      .from("staff")
+    const receptionistResult = await supabaseClient
+      .from("receptionist")
       .select("id, auth_uid, full_name, email, role, department_id, phone, status, created_at, updated_at")
       .eq("auth_uid", authData.user.id)
       .maybeSingle();
 
-    if (!staffResult.error && staffResult.data) {
+    if (!receptionistResult.error && receptionistResult.data) {
       let departmentRow = null;
-      if (staffResult.data.department_id) {
+      if (receptionistResult.data.department_id) {
         const deptResult = await supabaseClient
           .from("departments")
           .select("name")
-          .eq("id", staffResult.data.department_id)
+          .eq("id", receptionistResult.data.department_id)
           .maybeSingle();
         if (!deptResult.error) {
           departmentRow = deptResult.data;
@@ -168,16 +168,16 @@ async function getCurrentStaffProfile() {
       }
 
       return {
-        source: "staff",
+        source: "receptionist",
         authUser: authData.user,
         profile: {
-          ...staffResult.data,
+          ...receptionistResult.data,
           departments: departmentRow ? { name: departmentRow.name } : null,
         },
       };
     }
   } catch (e) {
-    console.warn("Staff profile lookup failed:", e.message);
+    console.warn("receptionist profile lookup failed:", e.message);
   }
 
   // Fall back to users table
@@ -188,7 +188,7 @@ async function getCurrentStaffProfile() {
       .eq("auth_uid", authData.user.id)
       .maybeSingle();
 
-    if (!userResult.error && userResult.data && ["Staff", "Administrator"].includes(userResult.data.role)) {
+    if (!userResult.error && userResult.data && ["receptionist", "Administrator"].includes(userResult.data.role)) {
       let departmentRow = null;
       if (userResult.data.department_id) {
         const deptResult = await supabaseClient
@@ -217,11 +217,11 @@ async function getCurrentStaffProfile() {
   return null;
 }
 
-async function renderStaffShellProfile() {
-  const info = await getCurrentStaffProfile();
+async function renderreceptionistShellProfile() {
+  const info = await getCurrentreceptionistProfile();
   if (!info?.profile) return;
-  const name = info.profile.full_name || "Staff User";
-  const role = info.profile.role || "Staff";
+  const name = info.profile.full_name || "receptionist User";
+  const role = info.profile.role || "receptionist";
   const email = info.profile.email || info.authUser.email || "";
   document.querySelectorAll(".profile-name").forEach((el) => { el.textContent = name; });
   document.querySelectorAll(".profile-role").forEach((el) => { el.textContent = role; });
@@ -278,14 +278,14 @@ function subscribeToTokenUpdates(onChange) {
     .subscribe();
 }
 
-document.addEventListener("DOMContentLoaded", ensureStaffSession);
-document.addEventListener("DOMContentLoaded", renderStaffShellProfile);
+document.addEventListener("DOMContentLoaded", ensurereceptionistSession);
+document.addEventListener("DOMContentLoaded", renderreceptionistShellProfile);
 
 /* ------------------------------------------------------------
-   Staff sign out handler
+   receptionist sign out handler
    ------------------------------------------------------------ */
 document.addEventListener("DOMContentLoaded", function() {
-  const signoutBtn = document.getElementById("staffSignoutBtn");
+  const signoutBtn = document.getElementById("receptionistSignoutBtn");
   if (signoutBtn) {
     signoutBtn.addEventListener("click", async function() {
       if (!confirm("Are you sure you want to sign out?")) return;
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", function() {
       } catch (e) {
         console.warn("Sign out error:", e.message);
       }
-      window.location.href = "../../staff-login.html";
+      window.location.href = "../../receptionist-login.html";
     });
   }
 });

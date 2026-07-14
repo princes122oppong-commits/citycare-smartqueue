@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const { error } = currentProfileSource === "users"
       ? await supabaseClient.from("users").update(tablePayload).eq("id", currentProfileId)
-      : await supabaseClient.from("staff").update(tablePayload).eq("id", currentProfileId);
+      : await supabaseClient.from("receptionist").update(tablePayload).eq("id", currentProfileId);
 
     if (error) {
       console.error("Failed to save profile:", error);
@@ -76,19 +76,19 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadCurrentProfile() {
-  const info = await getCurrentStaffProfile();
+  const info = await getCurrentreceptionistProfile();
   if (!info?.profile) {
-    console.warn("No staff profile found for the signed-in user.");
+    console.warn("No receptionist profile found for the signed-in user.");
     return;
   }
 
   currentProfileSource = info.source;
   currentProfileId = info.profile.id;
 
-  const fullName = info.profile.full_name || "Staff User";
+  const fullName = info.profile.full_name || "receptionist User";
   const email = info.profile.email || info.authUser.email || "";
   const phone = info.profile.phone || "";
-  const role = info.profile.role || "Staff";
+  const role = info.profile.role || "receptionist";
   const department = info.profile.departments?.name || "General Medicine";
 
   document.querySelector(".profile-summary-name").textContent = fullName;

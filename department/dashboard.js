@@ -1,6 +1,6 @@
 /* ==========================================================================
    Department Portal - Dashboard & Queue logic
-   Staff login here sees ONLY their department's queue.
+   receptionist login here sees ONLY their department's queue.
    They can mark patients as served.
    ========================================================================== */
 
@@ -30,20 +30,20 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   var userId = authResult.data.user.id;
 
-  // Get staff profile with department
-  var staffResult = await supabaseClient
-    .from("staff")
+  // Get receptionist profile with department
+  var receptionistResult = await supabaseClient
+    .from("receptionist")
     .select("id, full_name, department_id, role")
     .eq("auth_uid", userId)
     .maybeSingle();
 
-  if (staffResult.error || !staffResult.data || !staffResult.data.department_id) {
+  if (receptionistResult.error || !receptionistResult.data || !receptionistResult.data.department_id) {
     await supabaseClient.auth.signOut();
     window.location.href = "../department-login.html";
     return;
   }
 
-  deptId = staffResult.data.department_id;
+  deptId = receptionistResult.data.department_id;
 
   // Get department name
   var deptName = "Department";
@@ -101,8 +101,8 @@ document.addEventListener("DOMContentLoaded", async function() {
   subscribeToChanges();
 
   // Subscribe to popup notifications
-  if (typeof subscribeStaffNotifications === "function") {
-    subscribeStaffNotifications(deptId);
+  if (typeof subscribereceptionistNotifications === "function") {
+    subscribereceptionistNotifications(deptId);
   }
 });
 

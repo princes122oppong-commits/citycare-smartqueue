@@ -5,7 +5,7 @@
 
 let selectedDepartmentId = null;
 let selectedDepartmentName = "";
-let staffProfile = null;
+let receptionistProfile = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("walkin-form");
@@ -13,9 +13,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const deptSelect = document.getElementById("department");
   if (!form || !tokenPreview || !deptSelect) return;
 
-  // Load staff profile for staff_id assignment
-  const staffInfo = await getCurrentStaffProfile();
-  if (staffInfo) staffProfile = staffInfo;
+  // Load receptionist profile for receptionist_id assignment
+  const receptionistInfo = await getCurrentreceptionistProfile();
+  if (receptionistInfo) receptionistProfile = receptionistInfo;
 
   // Load departments dynamically from Supabase
   await loadDepartments(deptSelect);
@@ -211,8 +211,8 @@ async function insertWalkinPatient(payload) {
     patientId = insertedPatient.id;
   }
 
-  // Get staff_id from the logged-in staff profile
-  const staffId = staffProfile?.profile?.id || null;
+  // Get receptionist_id from the logged-in receptionist profile
+  const receptionistId = receptionistProfile?.profile?.id || null;
 
   // Count people ahead in the same department waiting
   const { count: aheadCount } = await supabaseClient
@@ -239,7 +239,7 @@ async function insertWalkinPatient(payload) {
         token_no: token,
         patient_id: patientId,
         department_id: departmentId,
-        staff_id: staffId,
+        receptionist_id: receptionistId,
         status: "waiting",
         type: "walk-in",
         reason: payload.reason,

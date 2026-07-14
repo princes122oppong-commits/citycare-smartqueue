@@ -1,8 +1,8 @@
-.staff-auth-page .auth-card {
+.receptionist-auth-page .auth-card {
   border-top: 4px solid #0d9488;
 }
 
-.staff-pill {
+.receptionist-pill {
   display: inline-flex;
   align-items: center;
   width: fit-content;
@@ -17,7 +17,7 @@
   letter-spacing: 0.08em;
 }
 
-.staff-auth-page .toggle-visibility {
+.receptionist-auth-page .toggle-visibility {
   min-width: 56px;
   font-size: 12px;
   font-weight: 800;

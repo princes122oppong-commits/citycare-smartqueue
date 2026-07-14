@@ -9,9 +9,9 @@ from queue_entries
 group by department_id, token_no
 having count(*) > 1;
 
--- 2. Find staff records missing department assignments
+-- 2. Find receptionist records missing department assignments
 select id, full_name, department_id
-from staff
+from receptionist
 where department_id is null;
 
 -- 3. Find users missing department assignments
@@ -26,12 +26,12 @@ where department_id not in (
   select id from departments
 );
 
--- 5. Find queue entries pointing to non-existent staff
+-- 5. Find queue entries pointing to non-existent receptionist
 select *
 from queue_entries
-where staff_id is not null
-  and staff_id not in (
-    select id from staff
+where receptionist_id is not null
+  and receptionist_id not in (
+    select id from receptionist
   );
 
 -- 6. Find queue entries pointing to non-existent patients

@@ -1,6 +1,6 @@
 /* ==========================================================================
    shared/js/utils.js
-   Shared utility functions used across all portals (admin, staff, patient).
+   Shared utility functions used across all portals (admin, receptionist, patient).
    ========================================================================== */
 
 /**
@@ -122,9 +122,9 @@ function statusClass(status) {
 }
 
 /**
- * Map status to badge class for staff UI.
+ * Map status to badge class for receptionist UI.
  */
-function staffBadgeClass(status) {
+function receptionistBadgeClass(status) {
   const normalized = String(status || "").toLowerCase();
   if (["served", "completed", "confirmed", "active"].includes(normalized)) return "green";
   if (["waiting", "pending"].includes(normalized)) return "amber";

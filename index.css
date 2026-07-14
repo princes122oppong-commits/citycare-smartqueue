@@ -162,7 +162,7 @@ img{max-width:100%;display:block;}
 .portal-title{font-size:1.2rem;font-weight:800;color:var(--navy-900);}
 .portal-card p{color:var(--gray-600);line-height:1.7;}
 .portal-patient{border-color:rgba(20,184,166,.25);}
-.portal-staff{border-color:rgba(37,99,235,.25);}
+.portal-receptionist{border-color:rgba(37,99,235,.25);}
 .portal-admin{border-color:rgba(15,41,66,.25);}
 
 /* Contact CTA */

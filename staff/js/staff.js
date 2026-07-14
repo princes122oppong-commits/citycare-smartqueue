@@ -1,5 +1,5 @@
 /* ==========================================================
-   MediQueue — Staff Console
+   MediQueue — receptionist Console
    Frontend logic with Supabase integration.
    ========================================================== */
 
@@ -12,7 +12,7 @@
      ========================================================== */
   if (typeof supabaseClient === "undefined" || !supabaseClient) {
     console.error(
-      "staff.js: supabaseClient not found. Ensure supabase-config.js is loaded first."
+      "receptionist.js: supabaseClient not found. Ensure supabase-config.js is loaded first."
     );
     return;
   }
@@ -572,7 +572,7 @@
       } catch (e) {
         console.warn("Logout error:", e.message);
       }
-      window.location.href = "../../staff-login.html";
+      window.location.href = "../../receptionist-login.html";
     });
 
     // Periodic refresh of "time ago" + avg wait without a full reload
@@ -586,7 +586,7 @@
   function subscribeToQueueChanges() {
     if (!supabaseClient) return;
     supabaseClient
-      .channel("staff-queue-changes")
+      .channel("receptionist-queue-changes")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "queue_entries" },

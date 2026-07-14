@@ -1,16 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 
-const loginPages = ['login.html', 'register.html', 'admin-login.html', 'staff-login.html', 'department-login.html'];
-const staffPages = [
-  'staff/html/staff-dashboard.html',
-  'staff/html/patients.html',
-  'staff/html/appointments.html',
-  'staff/html/queue-management.html',
-  'staff/html/active-queue.html',
-  'staff/html/department-queue.html',
-  'staff/html/walkin-registration.html',
-  'staff/html/profile.html'
+const loginPages = ['login.html', 'register.html', 'admin-login.html', 'receptionist-login.html', 'department-login.html'];
+const receptionistPages = [
+  'receptionist/html/receptionist-dashboard.html',
+  'receptionist/html/patients.html',
+  'receptionist/html/appointments.html',
+  'receptionist/html/queue-management.html',
+  'receptionist/html/active-queue.html',
+  'receptionist/html/department-queue.html',
+  'receptionist/html/walkin-registration.html',
+  'receptionist/html/profile.html'
 ];
 const adminPages = [
   'admin/html/admin-dashboard.html',
@@ -35,7 +35,7 @@ const departmentPages = [
   'department/queue.html'
 ];
 
-const allPages = [...loginPages, ...staffPages, ...adminPages, ...patientPages, ...departmentPages];
+const allPages = [...loginPages, ...receptionistPages, ...adminPages, ...patientPages, ...departmentPages];
 
 function updateLogoInFile(filePath) {
   const fullPath = path.join(__dirname, filePath);

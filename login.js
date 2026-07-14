@@ -1,5 +1,5 @@
 /* ==========================================================================
-   login.js - Unified login for patients, staff, and administrators.
+   login.js - Unified login for patients, receptionist, and administrators.
    Routes users to the appropriate dashboard after authentication.
    ========================================================================== */
 
@@ -86,16 +86,16 @@ if (loginForm) {
       // Determine where to redirect based on role
       var redirectTarget = await determineRedirectTarget(userId);
 
-      // Check if user has a patient profile - if not, that's OK (they may be staff/admin)
+      // Check if user has a patient profile - if not, that's OK (they may be receptionist/admin)
       var patientCheck = await supabaseClient
         .from('patients')
         .select('id')
         .eq('auth_uid', userId)
         .maybeSingle();
 
-      // If user is only a patient (no staff/admin role), ensure they have a patient profile
-      var isStaffOrAdmin = redirectTarget.indexOf('staff') >= 0 || redirectTarget.indexOf('admin') >= 0;
-      if (!isStaffOrAdmin && (patientCheck.error || !patientCheck.data)) {
+      // If user is only a patient (no receptionist/admin role), ensure they have a patient profile
+      var isreceptionistOrAdmin = redirectTarget.indexOf('receptionist') >= 0 || redirectTarget.indexOf('admin') >= 0;
+      if (!isreceptionistOrAdmin && (patientCheck.error || !patientCheck.data)) {
         await supabaseClient.auth.signOut();
         throw new Error('No patient profile found for this account. Please register first.');
       }

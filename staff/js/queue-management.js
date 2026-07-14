@@ -81,11 +81,11 @@ function renderQueueManagementTable() {
   upcomingBody.innerHTML = filteredRows.length
     ? filteredRows.map((row) => `
         <tr>
-          <td class="cell-primary">${escapeStaffHtml(row.tokenNo)}</td>
-          <td>${escapeStaffHtml(row.patientName)}</td>
-          <td>${escapeStaffHtml(row.department)}</td>
-          <td>${escapeStaffHtml(row.timeInQueue)}</td>
-          <td><span class="badge ${staffBadgeClass(row.status)}">${escapeStaffHtml(row.statusLabel)}</span></td>
+          <td class="cell-primary">${escapereceptionistHtml(row.tokenNo)}</td>
+          <td>${escapereceptionistHtml(row.patientName)}</td>
+          <td>${escapereceptionistHtml(row.department)}</td>
+          <td>${escapereceptionistHtml(row.timeInQueue)}</td>
+          <td><span class="badge ${receptionistBadgeClass(row.status)}">${escapereceptionistHtml(row.statusLabel)}</span></td>
         </tr>
       `).join("")
     : `<tr><td colspan="5">No patients are waiting in the queue.</td></tr>`;

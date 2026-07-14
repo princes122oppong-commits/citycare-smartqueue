@@ -1,5 +1,5 @@
 /* ============================================================
-   users.js - live Supabase users across patients, staff, admins
+   users.js - live Supabase users across patients, receptionist, admins
    ============================================================ */
 
 let allUsers = [];
@@ -8,10 +8,10 @@ let currentPage = 1;
 const PAGE_SIZE = 7;
 let editingUserKey = null;
 let departmentsList = [];
-let editingUserStaffId = null;
+let editingUserreceptionistId = null;
 
 function needsAuthAccount(role) {
-  return role === "Staff" || role === "Department" || role === "Administrator";
+  return role === "receptionist" || role === "Department" || role === "Administrator";
 }
 
 function needsDepartment(role) {
@@ -35,23 +35,23 @@ function normalizeUser(row, source, roleOverride = null) {
 }
 
 async function loadUsers() {
-  const [adminRows, staffRows, patientRows] = await Promise.all([
+  const [adminRows, receptionistRows, patientRows] = await Promise.all([
     fetchTable("users", { order: { column: "joined_at", ascending: false } }),
-    fetchTable("staff", { order: { column: "created_at", ascending: false } }),
+    fetchTable("receptionist", { order: { column: "created_at", ascending: false } }),
     fetchTable("patients", { order: { column: "created_at", ascending: false } }),
   ]);
 
   const adminUsers = adminRows.map((row) => normalizeUser(row, "users"));
-  const staffUsers = staffRows.map((row) => normalizeUser(row, "staff", row.role || "Staff"));
+  const receptionistUsers = receptionistRows.map((row) => normalizeUser(row, "receptionist", row.role || "receptionist"));
   const patientUsers = patientRows.map((row) => normalizeUser(row, "patients", "Patient"));
-  // Map "Department" role from staff table to display as "Department"
-  staffUsers.forEach(function(u) {
-    if (u.role === "Staff" && u.department_id) {
+  // Map "Department" role from receptionist table to display as "Department"
+  receptionistUsers.forEach(function(u) {
+    if (u.role === "receptionist" && u.department_id) {
       u.role = "Department";
     }
   });
 
-  allUsers = [...adminUsers, ...staffUsers, ...patientUsers].sort((a, b) => {
+  allUsers = [...adminUsers, ...receptionistUsers, ...patientUsers].sort((a, b) => {
     const aDate = new Date(a.joined || 0).getTime();
     const bDate = new Date(b.joined || 0).getTime();
     return bDate - aDate;
@@ -66,7 +66,7 @@ function applyFilters() {
 
   filteredUsers = allUsers.filter((u) => {
     const matchesSearch = !search || u.name.toLowerCase().includes(search) || u.email.toLowerCase().includes(search) || u.id.toLowerCase().includes(search);
-    const matchesRole = !role || u.role === role || (role === "Staff" && ["Doctor", "Nurse", "Staff"].includes(u.role)) || (role === "Department" && u.role === "Department");
+    const matchesRole = !role || u.role === role || (role === "receptionist" && ["Doctor", "Nurse", "receptionist"].includes(u.role)) || (role === "Department" && u.role === "Department");
     const matchesStatus = !status || u.status === status;
     return matchesSearch && matchesRole && matchesStatus;
   });
@@ -131,7 +131,7 @@ function openModal(user = null) {
   document.getElementById("modalTitle").textContent = user ? "Edit User" : "Add User";
   document.getElementById("fieldName").value = user?.name || "";
   document.getElementById("fieldEmail").value = user?.email || "";
-  document.getElementById("fieldRole").value = user?.role === "Patient" ? "Patient" : user?.role === "Administrator" ? "Administrator" : user?.role === "Department" ? "Department" : "Staff";
+  document.getElementById("fieldRole").value = user?.role === "Patient" ? "Patient" : user?.role === "Administrator" ? "Administrator" : user?.role === "Department" ? "Department" : "receptionist";
   document.getElementById("fieldStatus").value = user?.status || "Active";
   document.getElementById("fieldPassword").value = "";
   document.getElementById("fieldDepartment").value = user?.department_id || "";
@@ -185,7 +185,7 @@ function payloadForTable(table, formValues) {
 async function createAuthAccountForUser(formValues) {
   if (!needsAuthAccount(formValues.role)) return null;
   if (!formValues.password || formValues.password.length < 6) {
-    throw new Error("Enter a login password of at least 6 characters for staff/admin users.");
+    throw new Error("Enter a login password of at least 6 characters for receptionist/admin users.");
   }
   if (!window.supabase || typeof SUPABASE_URL === "undefined" || typeof SUPABASE_ANON_KEY === "undefined") {
     throw new Error("Supabase Auth is not configured.");
@@ -251,13 +251,13 @@ async function handleUserFormSubmit(e) {
   if (!formValues.name || !formValues.email) return;
 
   const existing = allUsers.find((user) => user.key === editingUserKey);
-  const isStaffUser = formValues.role === "Staff";
+  const isreceptionistUser = formValues.role === "receptionist";
   const isDeptUser = formValues.role === "Department";
 
-  // For new staff/department users, save to "staff" table with department_id (not the "users" table)
-  const targetTable = existing?.source || (isStaffUser || isDeptUser ? "staff" : tableForRole(formValues.role));
+  // For new receptionist/department users, save to "receptionist" table with department_id (not the "users" table)
+  const targetTable = existing?.source || (isreceptionistUser || isDeptUser ? "receptionist" : tableForRole(formValues.role));
 
-  // Create auth account for new staff or admin users
+  // Create auth account for new receptionist or admin users
   if (!existing && needsAuthAccount(formValues.role)) {
     try {
       formValues.authUid = await createAuthAccountForUser(formValues);
@@ -270,13 +270,13 @@ async function handleUserFormSubmit(e) {
 
   // Build payload based on target table
   let payload;
-  if (targetTable === "staff") {
+  if (targetTable === "receptionist") {
     payload = {
       full_name: formValues.name,
       email: formValues.email,
-      role: isDeptUser ? "Staff" : formValues.role,
+      role: isDeptUser ? "receptionist" : formValues.role,
       status: formValues.status,
-      department_id: isDeptUser ? formValues.department_id : (isStaffUser ? null : null),
+      department_id: isDeptUser ? formValues.department_id : (isreceptionistUser ? null : null),
       auth_uid: formValues.authUid || null,
     };
   } else if (targetTable === "patients") {
@@ -310,12 +310,12 @@ async function handleUserFormSubmit(e) {
 
   closeModal();
   await loadUsers();
-  if (!existing && targetTable === "staff" && isDeptUser) {
+  if (!existing && targetTable === "receptionist" && isDeptUser) {
     alert("Department account created. They can now log in via the Department Portal.");
-  } else if (!existing && targetTable === "staff") {
-    alert("Staff login account created and saved.");
+  } else if (!existing && targetTable === "receptionist") {
+    alert("receptionist login account created and saved.");
   } else if (!existing && targetTable === "users") {
-    alert("Staff login account created and saved.");
+    alert("receptionist login account created and saved.");
   }
 }
 
@@ -346,12 +346,12 @@ async function handleTableClick(e) {
       console.warn("Could not look up auth_uid:", e.message);
     }
 
-    // If deleting from staff table, first nullify any queue_entries references
-    if (user.source === "staff") {
-      await supabaseClient.from("queue_entries").update({ staff_id: null }).eq("staff_id", user.id);
+    // If deleting from receptionist table, first nullify any queue_entries references
+    if (user.source === "receptionist") {
+      await supabaseClient.from("queue_entries").update({ receptionist_id: null }).eq("receptionist_id", user.id);
     }
 
-    // Delete from the source table (staff, patients, or users)
+    // Delete from the source table (receptionist, patients, or users)
     const { error } = await supabaseClient.from(user.source).delete().eq("id", user.id);
     if (error) {
       console.error(error.message);
@@ -359,8 +359,8 @@ async function handleTableClick(e) {
       return;
     }
 
-    // Also try to delete from the users table if it was a staff record
-    if (user.source === "staff") {
+    // Also try to delete from the users table if it was a receptionist record
+    if (user.source === "receptionist") {
       await supabaseClient.from("users").delete().eq("email", user.email);
     }
 

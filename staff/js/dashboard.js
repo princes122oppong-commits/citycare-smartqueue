@@ -1,13 +1,13 @@
 /* ==========================================================================
-   Staff dashboard - live Supabase data.
+   receptionist dashboard - live Supabase data.
    ========================================================================== */
 
 let queueOverviewChart = null;
 let deptSummaryChart = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadStaffDashboard();
-  subscribeToTokenUpdates(loadStaffDashboard);
+  loadreceptionistDashboard();
+  subscribeToTokenUpdates(loadreceptionistDashboard);
 });
 
 async function fetchDashboardQueueRows() {
@@ -93,7 +93,7 @@ function renderRecentActivity(rows) {
         '<td class="cell-primary">' + tokenNo + '</td>' +
         '<td>' + patientName + '</td>' +
         '<td>' + deptName + '</td>' +
-        '<td><span class="badge ' + staffBadgeClass(row.status) + '">' + status + '</span></td>' +
+        '<td><span class="badge ' + receptionistBadgeClass(row.status) + '">' + status + '</span></td>' +
         '<td class="cell-muted">' + minutesSince(row.joined_at) + ' min</td>' +
         '</tr>';
     }).join("")
@@ -146,12 +146,12 @@ function renderDepartmentSummaryChart(rows) {
   });
   if (legend) {
     legend.innerHTML = labels.length
-      ? labels.map((label, i) => `<li><i class="dot" style="background:${colors[i % colors.length]}"></i>${escapeStaffHtml(label)} <span>${values[i]}</span></li>`).join("")
+      ? labels.map((label, i) => `<li><i class="dot" style="background:${colors[i % colors.length]}"></i>${escapereceptionistHtml(label)} <span>${values[i]}</span></li>`).join("")
       : "<li>No department queue data yet.</li>";
   }
 }
 
-async function loadStaffDashboard() {
+async function loadreceptionistDashboard() {
   const rows = await fetchDashboardQueueRows();
   setStatCards(rows);
   renderSnapshot(rows);

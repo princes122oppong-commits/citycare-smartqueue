@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Shared UI behavior for every staff page.
+   Shared UI behavior for every receptionist page.
    ========================================================================== */
 
 // Mobile sidebar toggle

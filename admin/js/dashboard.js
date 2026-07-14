@@ -187,9 +187,9 @@ async function loadSystemAlerts() {
 }
 
 async function loadAdminProfile() {
-  if (typeof getCurrentStaffOrAdmin !== "function") return;
+  if (typeof getCurrentreceptionistOrAdmin !== "function") return;
   try {
-    const info = await getCurrentStaffOrAdmin();
+    const info = await getCurrentreceptionistOrAdmin();
     if (!info?.profile) return;
     const nameEl = document.querySelector(".sidebar__user .user__name");
     const emailEl = document.querySelector(".sidebar__user .user__email");
