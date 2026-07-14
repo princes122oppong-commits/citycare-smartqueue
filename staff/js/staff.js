@@ -1,144 +1,152 @@
 /* ==========================================================
    MediQueue — Staff Console
-   Frontend logic running on local mock data.
-
-   ---------------------------------------------------------
-   SUPABASE INTEGRATION NOTES (for the next pass)
-   ---------------------------------------------------------
-   Everything that touches data lives behind the `db` object
-   below. To go live:
-
-     1. Add the Supabase client script tag in staff.html:
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-     2. Init once at the top of this file:
-        const supabase = window.supabase.createClient(
-          "YOUR_SUPABASE_URL",
-          "YOUR_SUPABASE_ANON_KEY"
-        );
-
-     3. Replace each method in `db` with a real query, e.g.:
-        async getQueue() {
-          const { data, error } = await supabase
-            .from("queue_tickets")
-            .select("*, patients(name, phone)")
-            .order("created_at", { ascending: true });
-          if (error) throw error;
-          return data;
-        }
-
-     4. For live updates, subscribe once in init():
-        supabase.channel("queue-changes")
-          .on("postgres_changes",
-              { event: "*", schema: "public", table: "queue_tickets" },
-              () => loadQueueAndRender())
-          .subscribe();
-
-   Nothing else in this file needs to change — every render
-   function reads from the `state` object, which `db` calls
-   populate.
+   Frontend logic with Supabase integration.
    ========================================================== */
 
 (() => {
   "use strict";
 
-  /* ---------------- Mock data store ---------------- */
-  const DEPARTMENTS = ["General", "Pediatrics", "Cardiology", "Lab"];
-
-  const FIRST_NAMES = ["Kwame", "Ama", "Kojo", "Efua", "Yaw", "Akosua", "Kofi", "Abena", "Kwabena", "Adjoa"];
-  const LAST_NAMES = ["Mensah", "Owusu", "Boateng", "Asante", "Appiah", "Darko", "Nkrumah", "Aidoo"];
-
-  function randomName() {
-    return `${FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)]} ${LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)]}`;
+  /* ==========================================================
+     Make sure supabaseClient is available (loaded from
+     ../../supabase-config.js via the HTML page).
+     ========================================================== */
+  if (typeof supabaseClient === "undefined" || !supabaseClient) {
+    console.error(
+      "staff.js: supabaseClient not found. Ensure supabase-config.js is loaded first."
+    );
+    return;
   }
 
-  function makeTicket(i, deptOverride) {
-    const dept = deptOverride || DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
-    const prefix = dept[0].toUpperCase();
-    const minutesAgo = Math.floor(Math.random() * 40) + 1;
-    return {
-      id: `t${i}`,
-      ticket: `${prefix}-${String(i).padStart(3, "0")}`,
-      patientName: randomName(),
-      phone: `02${Math.floor(10000000 + Math.random() * 89999999)}`,
-      department: dept,
-      status: "waiting", // waiting | serving | completed | skipped
-      createdAt: new Date(Date.now() - minutesAgo * 60000),
-    };
-  }
+  const sb = supabaseClient;
 
-  let ticketSeq = 1;
-  let mockQueue = Array.from({ length: 7 }, () => makeTicket(ticketSeq++));
-
-  const mockPatients = [
-    { name: "Akosua Frimpong", phone: "0244123456", lastVisit: "2026-06-28", visits: 5 },
-    { name: "Yaw Osei", phone: "0209988776", lastVisit: "2026-07-01", visits: 2 },
-    { name: "Efua Sarpong", phone: "0277001122", lastVisit: "2026-06-15", visits: 9 },
-    { name: "Kwabena Tetteh", phone: "0501234567", lastVisit: "2026-07-05", visits: 1 },
-  ];
-
-  let dailyServedCount = 12;
-  let dailySkippedCount = 3;
-
-  /* ---------------- Data access layer ----------------
-     Swap the bodies of these methods for real Supabase
-     calls when wiring up the backend. Keep the method
-     names and return shapes the same. */
+  /* ---------------- Data access layer ---------------- */
   const db = {
     async getQueue() {
-      await sleep(120);
-      return [...mockQueue];
+      const { data, error } = await sb
+        .from("queue_entries")
+        .select("*, patients(full_name, phone), departments(name)")
+        .order("joined_at", { ascending: true });
+      if (error) throw error;
+      return data.map((row) => ({
+        id: row.id,
+        ticket: row.token_no,
+        patientName: row.patients?.full_name || "Unknown",
+        phone: row.patients?.phone || "",
+        department: row.departments?.name || "Unassigned",
+        status: row.status,
+        createdAt: new Date(row.joined_at),
+      }));
     },
+
     async getPatients() {
-      await sleep(80);
-      return [...mockPatients];
+      const { data, error } = await sb
+        .from("patients")
+        .select("full_name, phone, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []).map((row) => ({
+        name: row.full_name,
+        phone: row.phone,
+        lastVisit: row.created_at
+          ? new Date(row.created_at).toISOString().slice(0, 10)
+          : "—",
+        visits: 0, // visits count would require a separate query / view
+      }));
     },
-    async callNext() {
-      await sleep(150);
-      // demote any currently-serving ticket to completed
-      const currentlyServing = mockQueue.find(t => t.status === "serving");
-      if (currentlyServing) {
-        currentlyServing.status = "completed";
-        dailyServedCount++;
+
+    async getDepartments() {
+      const { data, error } = await sb
+        .from("departments")
+        .select("name")
+        .order("name", { ascending: true });
+      if (error) throw error;
+      return (data || []).map((row) => row.name);
+    },
+
+    async callNext(args) {
+      // args: { department_id } optional
+      let query = sb
+        .from("queue_entries")
+        .select("id, token_no, patient_id, department_id, patients(full_name), departments(name)")
+        .eq("status", "waiting")
+        .order("joined_at", { ascending: true })
+        .limit(1);
+
+      if (args?.department_id) {
+        query = query.eq("department_id", args.department_id);
       }
-      const next = mockQueue.find(t => t.status === "waiting");
-      if (next) next.status = "serving";
-      return next || null;
+
+      const { data: waiting, error: fetchError } = await query;
+      if (fetchError) throw fetchError;
+      if (!waiting || waiting.length === 0) return null;
+
+      const next = waiting[0];
+
+      // Mark any currently serving ticket as "served" if we auto‑complete it
+      let servedQuery = sb
+        .from("queue_entries")
+        .update({ status: "served", served_at: new Date().toISOString() })
+        .eq("status", "now_serving");
+
+      if (args?.department_id) {
+        servedQuery = servedQuery.eq("department_id", args.department_id);
+      }
+      await servedQuery;
+
+      // Mark this ticket as now_serving
+      const { error: updateError } = await sb
+        .from("queue_entries")
+        .update({ status: "now_serving", called_at: new Date().toISOString() })
+        .eq("id", next.id);
+      if (updateError) throw updateError;
+
+      return {
+        id: next.id,
+        ticket: next.token_no,
+        patientName: next.patients?.full_name || "Unknown",
+        department: next.departments?.name || "Unassigned",
+        status: "now_serving",
+        createdAt: new Date(),
+      };
     },
+
     async skipTicket(id) {
-      await sleep(100);
-      const t = mockQueue.find(t => t.id === id);
-      if (t) {
-        t.status = "skipped";
-        dailySkippedCount++;
-      }
-      return t;
+      const { error } = await sb
+        .from("queue_entries")
+        .update({ status: "cancelled" })
+        .eq("id", id);
+      if (error) throw error;
+      return { id, status: "cancelled" };
     },
+
     async completeTicket(id) {
-      await sleep(100);
-      const t = mockQueue.find(t => t.id === id);
-      if (t) {
-        t.status = "completed";
-        dailyServedCount++;
-      }
-      return t;
+      const { error } = await sb
+        .from("queue_entries")
+        .update({ status: "served", served_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+      return { id, status: "served" };
     },
+
     async recallTicket(id) {
-      await sleep(100);
-      const t = mockQueue.find(t => t.id === id);
-      if (t) t.status = "waiting";
-      return t;
+      const { error } = await sb
+        .from("queue_entries")
+        .update({ status: "waiting" })
+        .eq("id", id);
+      if (error) throw error;
+      return { id, status: "waiting" };
     },
   };
 
   function sleep(ms) {
-    return new Promise(res => setTimeout(res, ms));
+    return new Promise((res) => setTimeout(res, ms));
   }
 
   /* ---------------- App state ---------------- */
   const state = {
     queue: [],
     patients: [],
+    departments: [],
     search: "",
     deptFilter: "all",
     view: "dashboard",
@@ -192,20 +200,37 @@
   }
 
   function statusLabel(status) {
-    return { waiting: "Waiting", serving: "Serving", completed: "Completed", skipped: "Skipped" }[status] || status;
+    return (
+      {
+        waiting: "Waiting",
+        now_serving: "Serving",
+        serving: "Serving",
+        served: "Served",
+        completed: "Completed",
+        cancelled: "Cancelled",
+        skipped: "Skipped",
+      }[status] || status
+    );
   }
 
   /* ---------------- Rendering ---------------- */
   function renderClock() {
     const now = new Date();
-    el.clock.textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    el.clock.textContent = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
   }
 
   function renderNowServing() {
-    const serving = state.queue.find(t => t.status === "serving");
+    const serving = state.queue.find(
+      (t) => t.status === "serving" || t.status === "now_serving"
+    );
     if (serving) {
       el.nowServingNumber.textContent = serving.ticket;
-      el.nowServingName.textContent = `${serving.patientName} · ${serving.department}`;
+      el.nowServingName.textContent =
+        `${serving.patientName} · ${serving.department}`;
       el.completeBtn.disabled = false;
       el.skipBtn.disabled = false;
     } else {
@@ -217,44 +242,73 @@
   }
 
   function renderStats() {
-    const waiting = state.queue.filter(t => t.status === "waiting").length;
+    const waiting = state.queue.filter(
+      (t) => t.status === "waiting"
+    ).length;
     el.statWaiting.textContent = waiting;
 
-    // rough avg wait: minutes since created for waiting tickets
-    const waitingTickets = state.queue.filter(t => t.status === "waiting");
+    const waitingTickets = state.queue.filter(
+      (t) => t.status === "waiting"
+    );
     const avg = waitingTickets.length
       ? Math.round(
-          waitingTickets.reduce((sum, t) => sum + (Date.now() - t.createdAt.getTime()) / 60000, 0) /
-            waitingTickets.length
+          waitingTickets.reduce(
+            (sum, t) => sum + (Date.now() - t.createdAt.getTime()) / 60000,
+            0
+          ) / waitingTickets.length
         )
       : 0;
     el.statAvgWait.innerHTML = `${avg}<span class="unit">min</span>`;
 
-    el.statServed.textContent = dailyServedCount;
-    el.statSkipped.textContent = dailySkippedCount;
+    const served = state.queue.filter(
+      (t) => t.status === "served" || t.status === "completed"
+    ).length;
+    const skipped = state.queue.filter(
+      (t) => t.status === "cancelled" || t.status === "skipped"
+    ).length;
+    el.statServed.textContent = served;
+    el.statSkipped.textContent = skipped;
   }
 
   function renderNavBadge() {
-    const waiting = state.queue.filter(t => t.status === "waiting").length;
+    const waiting = state.queue.filter((t) => t.status === "waiting").length;
     el.navQueueCount.textContent = waiting;
   }
 
   function initials(name) {
-    return name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
+    return name
+      .split(" ")
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
   }
 
   function renderQueueTable() {
     const rows = state.queue
-      .filter(t => t.status !== "completed")
-      .filter(t => (state.deptFilter === "all" ? true : t.department === state.deptFilter))
-      .filter(t => {
+      .filter((t) => t.status !== "served" && t.status !== "completed")
+      .filter((t) =>
+        state.deptFilter === "all" ? true : t.department === state.deptFilter
+      )
+      .filter((t) => {
         if (!state.search) return true;
         const q = state.search.toLowerCase();
-        return t.ticket.toLowerCase().includes(q) || t.patientName.toLowerCase().includes(q);
+        return (
+          t.ticket.toLowerCase().includes(q) ||
+          t.patientName.toLowerCase().includes(q)
+        );
       })
       .sort((a, b) => {
-        const order = { serving: 0, waiting: 1, skipped: 2 };
-        return order[a.status] - order[b.status] || a.createdAt - b.createdAt;
+        const order = {
+          now_serving: 0,
+          serving: 0,
+          waiting: 1,
+          cancelled: 2,
+          skipped: 2,
+        };
+        const aOrder = order[a.status] ?? 3;
+        const bOrder = order[b.status] ?? 3;
+        return aOrder - bOrder || a.createdAt - b.createdAt;
       });
 
     el.queueTableBody.innerHTML = "";
@@ -263,7 +317,7 @@
       el.queueEmpty.hidden = false;
     } else {
       el.queueEmpty.hidden = true;
-      rows.forEach(t => el.queueTableBody.appendChild(buildQueueRow(t)));
+      rows.forEach((t) => el.queueTableBody.appendChild(buildQueueRow(t)));
     }
   }
 
@@ -289,10 +343,10 @@
     if (t.status === "waiting") {
       actionsWrap.appendChild(makeActionBtn("Call", true, () => callSpecific(t.id)));
       actionsWrap.appendChild(makeActionBtn("Skip", false, () => handleSkip(t.id)));
-    } else if (t.status === "serving") {
+    } else if (t.status === "serving" || t.status === "now_serving") {
       actionsWrap.appendChild(makeActionBtn("Complete", true, () => handleComplete(t.id)));
       actionsWrap.appendChild(makeActionBtn("Skip", false, () => handleSkip(t.id)));
-    } else if (t.status === "skipped") {
+    } else if (t.status === "cancelled" || t.status === "skipped") {
       actionsWrap.appendChild(makeActionBtn("Recall", false, () => handleRecall(t.id)));
     }
 
@@ -310,7 +364,7 @@
 
   function renderPatientsTable() {
     el.patientsTableBody.innerHTML = "";
-    state.patients.forEach(p => {
+    state.patients.forEach((p) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><span class="patient-name">${p.name}</span></td>
@@ -322,7 +376,11 @@
       const actionsCell = tr.querySelector(".col-actions");
       const wrap = document.createElement("div");
       wrap.className = "row-actions";
-      wrap.appendChild(makeActionBtn("View", false, () => showToast(`Viewing ${p.name}'s record (placeholder)`)));
+      wrap.appendChild(
+        makeActionBtn("View", false, () =>
+          showToast(`Viewing ${p.name}'s record (placeholder)`)
+        )
+      );
       actionsCell.appendChild(wrap);
       el.patientsTableBody.appendChild(tr);
     });
@@ -337,7 +395,12 @@
 
   /* ---------------- Actions ---------------- */
   async function loadQueueAndRender() {
-    state.queue = await db.getQueue();
+    try {
+      state.queue = await db.getQueue();
+    } catch (err) {
+      console.error("Failed to load queue:", err);
+      showToast("Failed to load queue data");
+    }
     renderAll();
   }
 
@@ -345,82 +408,130 @@
     el.callNextBtn.disabled = true;
     try {
       const next = await db.callNext();
-      state.queue = await db.getQueue();
-      renderAll();
-      showToast(next ? `Now calling ${next.ticket} — ${next.patientName}` : "No one waiting in the queue");
+      await loadQueueAndRender();
+      showToast(
+        next
+          ? `Now calling ${next.ticket} — ${next.patientName}`
+          : "No one waiting in the queue"
+      );
+    } catch (err) {
+      console.error("callNext failed:", err);
+      showToast("Failed to call next patient");
     } finally {
       el.callNextBtn.disabled = false;
     }
   }
 
   async function callSpecific(id) {
-    // treat as "jump the queue and call this ticket now"
-    const currentlyServing = state.queue.find(t => t.status === "serving");
-    if (currentlyServing) await db.completeTicket(currentlyServing.id);
-    const ticket = state.queue.find(t => t.id === id);
-    if (ticket) ticket.status = "serving";
-    state.queue = await db.getQueue();
-    // re-apply the manual call since mock db doesn't know about it
-    const t = state.queue.find(x => x.id === id);
-    if (t) t.status = "serving";
-    renderAll();
+    // Complete any currently serving ticket first
+    const currentlyServing = state.queue.find(
+      (t) => t.status === "serving" || t.status === "now_serving"
+    );
+    if (currentlyServing) {
+      try {
+        await db.completeTicket(currentlyServing.id);
+      } catch (err) {
+        console.warn("Failed to auto-complete current ticket:", err);
+      }
+    }
+
+    // Set the specific ticket to "now_serving" via Supabase
+    try {
+      const { error } = await supabaseClient
+        .from("queue_entries")
+        .update({ status: "now_serving", called_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    } catch (err) {
+      console.error("Failed to call specific ticket:", err);
+      showToast("Failed to call patient");
+      return;
+    }
+
+    await loadQueueAndRender();
+    const t = state.queue.find((x) => x.id === id);
     showToast(`Now calling ${t ? t.ticket : ""}`);
   }
 
   async function handleSkip(id) {
-    const t = await db.skipTicket(id);
-    state.queue = await db.getQueue();
-    renderAll();
-    showToast(t ? `${t.ticket} marked as skipped / no-show` : "Ticket skipped");
+    try {
+      await db.skipTicket(id);
+      await loadQueueAndRender();
+      showToast(`Ticket skipped`);
+    } catch (err) {
+      console.error("skipTicket failed:", err);
+      showToast("Failed to skip ticket");
+    }
   }
 
   async function handleComplete(id) {
-    const t = await db.completeTicket(id);
-    state.queue = await db.getQueue();
-    renderAll();
-    showToast(t ? `${t.ticket} marked complete` : "Ticket completed");
+    try {
+      await db.completeTicket(id);
+      await loadQueueAndRender();
+      showToast(`Ticket completed`);
+    } catch (err) {
+      console.error("completeTicket failed:", err);
+      showToast("Failed to complete ticket");
+    }
   }
 
   async function handleRecall(id) {
-    const t = await db.recallTicket(id);
-    state.queue = await db.getQueue();
-    renderAll();
-    showToast(t ? `${t.ticket} returned to the waiting list` : "Ticket recalled");
+    try {
+      await db.recallTicket(id);
+      await loadQueueAndRender();
+      showToast(`Ticket returned to waiting list`);
+    } catch (err) {
+      console.error("recallTicket failed:", err);
+      showToast("Failed to recall ticket");
+    }
   }
 
   async function handleCompleteCurrent() {
-    const serving = state.queue.find(t => t.status === "serving");
+    const serving = state.queue.find(
+      (t) => t.status === "serving" || t.status === "now_serving"
+    );
     if (!serving) return;
     await handleComplete(serving.id);
   }
 
   async function handleSkipCurrent() {
-    const serving = state.queue.find(t => t.status === "serving");
+    const serving = state.queue.find(
+      (t) => t.status === "serving" || t.status === "now_serving"
+    );
     if (!serving) return;
     await handleSkip(serving.id);
   }
 
   /* ---------------- View switching ---------------- */
   const VIEW_META = {
-    dashboard: { title: "Dashboard", sub: "Outpatient Department · Window 3" },
+    dashboard: {
+      title: "Dashboard",
+      sub: "Outpatient Department · Window 3",
+    },
     queue: { title: "Live Queue", sub: "All departments" },
-    patients: { title: "Patients", sub: "Search and manage patient records" },
+    patients: {
+      title: "Patients",
+      sub: "Search and manage patient records",
+    },
     reports: { title: "Reports", sub: "Daily and weekly analytics" },
-    settings: { title: "Settings", sub: "Window, department, and account" },
+    settings: {
+      title: "Settings",
+      sub: "Window, department, and account",
+    },
   };
 
   function switchView(view) {
     state.view = view;
-    el.navItems.forEach(item => item.classList.toggle("is-active", item.dataset.view === view));
-    el.views.forEach(section => {
+    el.navItems.forEach((item) =>
+      item.classList.toggle("is-active", item.dataset.view === view)
+    );
+    el.views.forEach((section) => {
       section.hidden = section.id !== `view-${view}`;
     });
     const meta = VIEW_META[view] || VIEW_META.dashboard;
     el.viewTitle.textContent = meta.title;
     el.viewSub.textContent = meta.sub;
 
-    // "queue" nav reuses the dashboard view (queue table is already there);
-    // if you split it into its own section later, render it here.
     if (view === "queue") {
       el.viewTitle.textContent = "Live Queue";
       document.getElementById("view-dashboard").hidden = false;
@@ -432,8 +543,8 @@
 
   /* ---------------- Event wiring ---------------- */
   function wireEvents() {
-    el.navItems.forEach(item => {
-      item.addEventListener("click", e => {
+    el.navItems.forEach((item) => {
+      item.addEventListener("click", (e) => {
         e.preventDefault();
         switchView(item.dataset.view);
       });
@@ -443,25 +554,45 @@
     el.completeBtn.addEventListener("click", handleCompleteCurrent);
     el.skipBtn.addEventListener("click", handleSkipCurrent);
 
-    el.queueSearch.addEventListener("input", e => {
+    el.queueSearch.addEventListener("input", (e) => {
       state.search = e.target.value.trim();
       renderQueueTable();
     });
 
-    el.deptFilter.addEventListener("change", e => {
+    el.deptFilter.addEventListener("change", (e) => {
       state.deptFilter = e.target.value;
       renderQueueTable();
     });
 
-    el.logoutBtn.addEventListener("click", () => {
-      showToast("Logged out (placeholder — wire up to auth)");
+    el.logoutBtn.addEventListener("click", async () => {
+      try {
+        if (supabaseClient) {
+          await supabaseClient.auth.signOut();
+        }
+      } catch (e) {
+        console.warn("Logout error:", e.message);
+      }
+      window.location.href = "../../staff-login.html";
     });
 
-    // periodic refresh of "time ago" + avg wait without a full reload
+    // Periodic refresh of "time ago" + avg wait without a full reload
     setInterval(() => {
       renderQueueTable();
       renderStats();
     }, 30000);
+  }
+
+  /* ---------------- Supabase realtime subscription ---------------- */
+  function subscribeToQueueChanges() {
+    if (!supabaseClient) return;
+    supabaseClient
+      .channel("staff-queue-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "queue_entries" },
+        () => loadQueueAndRender()
+      )
+      .subscribe();
   }
 
   /* ---------------- Init ---------------- */
@@ -471,12 +602,39 @@
 
     wireEvents();
 
-    state.queue = await db.getQueue();
-    state.patients = await db.getPatients();
-    renderAll();
+    try {
+      // Load departments for the filter dropdown
+      state.departments = await db.getDepartments();
+      if (el.deptFilter && state.departments.length > 0) {
+        // Populate department filter if it exists
+        const currentVal = el.deptFilter.value;
+        el.deptFilter.innerHTML =
+          '<option value="all">All Departments</option>';
+        state.departments.forEach((dept) => {
+          const opt = document.createElement("option");
+          opt.value = dept;
+          opt.textContent = dept;
+          el.deptFilter.appendChild(opt);
+        });
+        el.deptFilter.value = currentVal;
+      }
+    } catch (err) {
+      console.warn("Failed to load departments:", err);
+    }
+
+    await loadQueueAndRender();
+
+    try {
+      state.patients = await db.getPatients();
+    } catch (err) {
+      console.warn("Failed to load patients:", err);
+    }
 
     el.completeBtn.disabled = true;
     el.skipBtn.disabled = true;
+
+    // Subscribe to realtime updates
+    subscribeToQueueChanges();
   }
 
   document.addEventListener("DOMContentLoaded", init);
