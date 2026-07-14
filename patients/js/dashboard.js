@@ -196,14 +196,8 @@ async function renderDashboard(patient, authUser){
 
   const welcomeSubtitle = document.querySelector(".page-head .sub");
   if (welcomeSubtitle) {
-    const details = [
-      authUser?.email || patient?.email,
-      authUser?.user_metadata?.phone || patient?.phone,
-    ].filter(Boolean);
-
-    welcomeSubtitle.innerHTML = details.length
-      ? `Welcome back, <strong>${details.map(escapeHtml).join(" ")}</strong> <span class="wave">👋</span>`
-      : "We're glad to have you here.";
+    const displayName = authUser?.user_metadata?.full_name || patient?.full_name || "Patient";
+    welcomeSubtitle.innerHTML = `Welcome back, <strong>${escapeHtml(displayName)}</strong> <span class="wave">👋</span>`;
   }
 
 
