@@ -47,7 +47,7 @@ function showToast(title, body, type) {
 
   container.appendChild(toast);
 
-  // Auto-remove after 6 seconds
+  // Auto-remove after 20 seconds
   setTimeout(function() {
     if (toast.parentElement) {
       toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -55,7 +55,7 @@ function showToast(title, body, type) {
       toast.style.transform = 'translateX(100%)';
       setTimeout(function() { if (toast.parentElement) toast.remove(); }, 300);
     }
-  }, 6000);
+  }, 20000);
 }
 
 // Add slide-in animation
@@ -102,6 +102,23 @@ function subscribeStaffNotifications(departmentId) {
       }
     )
     .subscribe();
+
+  // Listen for queue status changes (when patient is served)
+  supabaseClient
+    .channel('staff-queue-status-notifications')
+    .on('postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'queue_entries', filter: 'department_id=eq.' + departmentId },
+      function(payload) {
+        var entry = payload.new;
+        var oldStatus = payload.old ? payload.old.status : '';
+        if (entry.status === 'served' && oldStatus !== 'served') {
+          showToast('Patient Served', 'Token ' + (entry.token_no || '') + ' has been served. Next patient please!', 'success');
+        } else if (entry.status === 'now_serving' && oldStatus !== 'now_serving') {
+          showToast('Now Serving', 'Token ' + (entry.token_no || '') + ' — Please call the patient.', 'queue');
+        }
+      }
+    )
+    .subscribe();
 }
 
 // ==========================================================================
@@ -142,7 +159,7 @@ function subscribePatientNotifications(patientId) {
         var entry = payload.new;
         var eventType = payload.eventType;
         if (entry.status === 'now_serving') {
-          showToast('Now Serving', 'Token ' + (entry.token_no || '') + ' — It\'s your turn! Please proceed to the department.', 'queue');
+          showToast('Your Turn Now!', 'Token ' + (entry.token_no || '') + ' — It\'s your turn! Please proceed to the department.', 'queue');
         } else if (entry.status === 'served') {
           showToast('Service Complete', 'Your consultation is complete. Thank you for visiting!', 'success');
         } else if (eventType === 'INSERT' && entry.status === 'waiting') {
