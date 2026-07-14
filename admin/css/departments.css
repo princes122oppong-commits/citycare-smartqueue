@@ -226,9 +226,9 @@ a { text-decoration: none; color: inherit; }
 .modal__header h3 { font-size: 16px; }
 .modal__close { border: none; background: none; font-size: 15px; cursor: pointer; color: var(--text-muted); }
 
-#userForm { display: flex; flex-direction: column; gap: 12px; }
-#userForm label { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: var(--text-muted); }
-#userForm input, #userForm select {
+#deptForm { display: flex; flex-direction: column; gap: 12px; }
+#deptForm label { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: var(--text-muted); }
+#deptForm input, #deptForm select {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 9px 10px;
