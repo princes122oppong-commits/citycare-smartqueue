@@ -64,6 +64,18 @@ style.textContent =
   '@keyframes slideIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}';
 document.head.appendChild(style);
 
+// Test function to verify toast is working
+function testToast() {
+  showToast('✅ Toast Working!', 'This is a test notification to verify the popup system is functioning correctly.', 'success');
+  setTimeout(function() {
+    showToast('📋 Queue Test', 'You would see walk-in patient notifications here.', 'queue');
+  }, 1500);
+  setTimeout(function() {
+    showToast('⚠️ Works!', 'All notification types are working properly.', 'info');
+  }, 3000);
+  return 'Toast test initiated - check top-right corner';
+}
+
 // ==========================================================================
 // Staff/Department: Subscribe to new queue entries and appointments
 // Call this on staff/department pages
