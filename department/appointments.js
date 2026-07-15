@@ -10,32 +10,32 @@ var allAppointments = [];
 document.addEventListener("DOMContentLoaded", async function() {
   // Auth guard
   if (!supabaseClient) {
-    window.location.href = "../department-login.html";
+    window.location.href = "../department_staff-login.html";
     return;
   }
 
   var authResult = await supabaseClient.auth.getUser();
   if (authResult.error || !authResult.data.user) {
-    window.location.href = "../department-login.html";
+    window.location.href = "../department_staff-login.html";
     return;
   }
 
   var userId = authResult.data.user.id;
 
-  // Get receptionist profile with department
-  var receptionistResult = await supabaseClient
-    .from("receptionist")
+  // Get department staff profile with department
+  var deptStaffResult = await supabaseClient
+    .from("department_staff")
     .select("id, full_name, department_id, role")
     .eq("auth_uid", userId)
     .maybeSingle();
 
-  if (receptionistResult.error || !receptionistResult.data || !receptionistResult.data.department_id) {
+  if (deptStaffResult.error || !deptStaffResult.data || !deptStaffResult.data.department_id) {
     await supabaseClient.auth.signOut();
-    window.location.href = "../department-login.html";
+    window.location.href = "../department_staff-login.html";
     return;
   }
 
-  deptId = receptionistResult.data.department_id;
+  deptId = deptStaffResult.data.department_id;
 
   // Get department name
   var deptResult = await supabaseClient
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     btn.addEventListener("click", async function() {
       if (!confirm("Sign out of " + deptName + "?")) return;
       await supabaseClient.auth.signOut();
-      window.location.href = "../department-login.html";
+      window.location.href = "../department_staff-login.html";
     });
   });
 

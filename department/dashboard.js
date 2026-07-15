@@ -18,13 +18,13 @@ var allQueueRows = [];
 document.addEventListener("DOMContentLoaded", async function() {
   // Auth guard - redirect to department login if not authenticated
   if (!supabaseClient) {
-    window.location.href = "../department-login.html";
+    window.location.href = "../department_staff-login.html";
     return;
   }
 
   var authResult = await supabaseClient.auth.getUser();
   if (authResult.error || !authResult.data.user) {
-    window.location.href = "../department-login.html";
+    window.location.href = "../department_staff-login.html";
     return;
   }
 
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   if (deptStaffResult.error || !deptStaffResult.data || !deptStaffResult.data.department_id) {
     await supabaseClient.auth.signOut();
-    window.location.href = "../department-login.html";
+    window.location.href = "../department_staff-login.html";
     return;
   }
 
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     btn.addEventListener("click", async function() {
       if (!confirm("Sign out of " + deptName + "?")) return;
       await supabaseClient.auth.signOut();
-      window.location.href = "../department-login.html";
+      window.location.href = "../department_staff-login.html";
     });
   });
 

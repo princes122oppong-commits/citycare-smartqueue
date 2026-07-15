@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const loginPages = ['login.html', 'register.html', 'admin-login.html', 'receptionist-login.html', 'department-login.html'];
+const loginPages = ['login.html', 'register.html', 'admin-login.html', 'receptionist-login.html', 'department_staff-login.html'];
 const receptionistPages = [
   'receptionist/html/receptionist-dashboard.html',
   'receptionist/html/patients.html',
