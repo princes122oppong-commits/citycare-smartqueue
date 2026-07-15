@@ -1,62 +1,199 @@
-@import url('common.css');
+/* ============================================================
+   Book Appointment page styles
+   ============================================================ */
 
-.book-grid{
-  display:grid;
-  grid-template-columns:1.6fr 1fr;
-  gap:20px;
-  align-items:start;
-}
-
-.time-grid{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:10px;
-}
-.time-slot{
-  border:1px solid var(--border);
-  background:var(--white);
-  border-radius:var(--r-sm);
-  padding:11px 0;
-  font-size:13.5px;
-  font-weight:600;
-  color:var(--text-700);
-  transition:all .15s ease;
-}
-.time-slot:hover{ border-color:var(--blue-500); }
-.time-slot.selected{
-  background:var(--blue-600);
-  color:#fff;
-  border-color:var(--blue-600);
+.book-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
 }
 
-.summary-col{ display:flex; flex-direction:column; gap:16px; }
-.summary-card .sum-row{
-  display:flex;
-  align-items:flex-start;
-  gap:12px;
-  padding:12px 0;
-  border-bottom:1px solid var(--border);
+@media (max-width: 900px) {
+  .book-grid {
+    grid-template-columns: 1fr;
+  }
 }
-.summary-card .sum-row:last-child{ border-bottom:none; padding-bottom:0; }
-.sum-icon{ font-size:18px; }
-.sum-label{ font-size:11.5px; color:var(--text-400); font-weight:600; }
-.sum-value{ font-size:14px; font-weight:700; margin-top:2px; }
 
-.notice-card{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:var(--blue-50);
-  border-color:var(--blue-100);
-  font-size:13px;
-  color:var(--text-700);
+.card {
+  background: #fff;
+  border: 1px solid #e6eaf2;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
 }
-.notice-icon{ font-size:22px; flex-shrink:0; }
 
-@media (max-width: 900px){
-  .book-grid{ grid-template-columns:1fr; }
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #17213d;
+  margin: 0 0 16px;
 }
-@media (max-width: 600px){
-  .time-grid{ grid-template-columns:repeat(2, 1fr); gap:8px; }
-  .time-slot{ padding:9px 0; font-size:12.5px; }
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #526078;
+  margin-bottom: 6px;
+}
+
+.select,
+.input {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid #d5dbe8;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #17213d;
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.select:focus,
+.input:focus {
+  outline: none;
+  border-color: #2f5fe0;
+  box-shadow: 0 0 0 3px rgba(47, 95, 224, 0.12);
+}
+
+/* Time slots grid */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.time-slot {
+  padding: 10px 12px;
+  border: 1px solid #d5dbe8;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.time-slot:hover {
+  border-color: #2f5fe0;
+  background: #f5f8ff;
+}
+
+.time-slot.selected {
+  background: #2f5fe0;
+  color: #fff;
+  border-color: #2f5fe0;
+}
+
+/* Summary column */
+.summary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sum-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sum-icon {
+  font-size: 22px;
+}
+
+.sum-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #97a1b8;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.sum-value {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #17213d;
+  margin-top: 2px;
+}
+
+.notice-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fef5e7;
+  border: 1px solid #fbd5a5;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.notice-icon {
+  font-size: 18px;
+}
+
+.notice-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #854f01;
+}
+
+/* Existing appointments list */
+.existing-appt-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e6eaf2;
+}
+
+.existing-appt-item:last-child {
+  border-bottom: none;
+}
+
+.ea-icon {
+  font-size: 18px;
+}
+
+.ea-body {
+  flex: 1;
+}
+
+.ea-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #17213d;
+}
+
+.ea-meta {
+  font-size: 12px;
+  color: #97a1b8;
+  margin-top: 2px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.badge-success {
+  background: #e7f8ef;
+  color: #1c7a4a;
+}
+
+.badge-warning {
+  background: #fef5e7;
+  color: #854f01;
+}
+
+.badge-danger {
+  background: #fee7e7;
+  color: #c01f1f;
 }
