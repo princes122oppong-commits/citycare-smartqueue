@@ -211,9 +211,6 @@ async function insertWalkinPatient(payload) {
     patientId = insertedPatient.id;
   }
 
-  // Get receptionist_id from the logged-in receptionist profile
-  const receptionistId = receptionistProfile?.profile?.id || null;
-
   // Count people ahead in the same department waiting
   const { count: aheadCount } = await supabaseClient
     .from("queue_entries")
@@ -239,7 +236,7 @@ async function insertWalkinPatient(payload) {
         token_no: token,
         patient_id: patientId,
         department_id: departmentId,
-        staff_id: receptionistId,
+        staff_id: null,
         status: "waiting",
         type: "walk-in",
         reason: payload.reason,
