@@ -56,7 +56,7 @@ async function redirectIfStaffAlreadySignedIn() {
   const { data, error } = await supabaseClient.auth.getUser();
   if (error || !data.user) return;
   const staff = await findStaffProfile(data.user.id, data.user.email);
-  if (staff) window.location.href = "receptionist/html/staff-dashboard.html";
+  if (staff) window.location.href = "receptionist/html/receptionist-dashboard.html";
 }
 
 staffLoginForm?.addEventListener("submit", async (event) => {
@@ -105,7 +105,7 @@ staffLoginForm?.addEventListener("submit", async (event) => {
       throw new Error("This receptionist account is not active.");
     }
 
-    window.location.href = "receptionist/html/staff-dashboard.html";
+    window.location.href = "receptionist/html/receptionist-dashboard.html";
   } catch (error) {
     staffPasswordError.textContent = error.message || "Unable to sign in. Please try again.";
   } finally {
