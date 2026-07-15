@@ -78,7 +78,7 @@
       </button>
       <div>
         <div class="topbar-title">Queue Management</div>
-        <div class="topbar-sub">Manage and update the queue status.</div>
+        <div class="topbar-sub">Manage each department's queue independently.</div>
       </div>
 
       <div class="topbar-right">
@@ -95,76 +95,9 @@
     </header>
 
     <main class="content">
-
-      <div class="toolbar spread">
-        <select class="filter-select" id="dept-filter">
-          <option value="All Departments">All Departments</option>
-        </select>
-        <div class="search-field" style="min-width:280px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="mgmt-search" placeholder="Search token or patient..." />
-        </div>
-      </div>
-
-      <div class="mgmt-grid">
-
-        <div class="card now-serving-card">
-          <div class="card-head"><h3>Now Serving</h3></div>
-          <div class="now-serving-body">
-            <div class="ns-token" id="ns-token">G-23</div>
-            <div class="ns-name" id="ns-name">John Doe</div>
-            <div class="ns-dept" id="ns-dept">OPD - General Medicine</div>
-
-            <div class="ns-meta">
-              <div class="ns-meta-row">
-                <span>Token Number</span>
-                <strong id="meta-token">G-23</strong>
-              </div>
-              <div class="ns-meta-row">
-                <span>Time in Queue</span>
-                <strong id="meta-time">18 min</strong>
-              </div>
-              <div class="ns-meta-row">
-                <span>Estimated Wait</span>
-                <strong id="meta-wait">18 - 22 min</strong>
-              </div>
-            </div>
-
-            <div class="ns-actions">
-              <button class="btn btn-success" id="mark-served-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Mark as Served
-              </button>
-              <button class="btn btn-primary" id="call-next-btn">
-                Call Next
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <h3>Upcoming Queue</h3>
-          </div>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr><th>Token No.</th><th>Patient Name</th><th>Department</th><th>Time in Queue</th><th>Status</th></tr>
-              </thead>
-              <tbody id="upcoming-queue-body">
-                <tr><td colspan="5">Loading upcoming queue…</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="pagination">
-            <span>Showing 1 to 5 of 18 patients</span>
-            <a href="active-queue.html" class="view-all-link">View all
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </div>
-
+      <div class="dept-queue-grid" id="dept-queue-container">
+        <!-- Department queue cards will be dynamically injected here -->
+        <p id="loading-depts">Loading departments...</p>
       </div>
     </main>
   </div>

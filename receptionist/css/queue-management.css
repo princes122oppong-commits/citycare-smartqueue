@@ -1,54 +1,182 @@
 /* ==========================================================================
-   Queue Management page — layout specific to queue-management.html
+   Queue Management — Per-department queue cards
    ========================================================================== */
 
-.mgmt-grid {
+.dept-queue-grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
 }
 
-.now-serving-card { align-self: start; }
-
-.now-serving-body {
-  padding: 4px 20px 22px;
-  text-align: center;
+.dept-queue-card {
+  background: #fff;
+  border: 1px solid var(--border, #e4e7ec);
+  border-radius: var(--r-lg, 12px);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.ns-token {
-  font-size: 34px;
-  font-weight: 800;
-  color: var(--blue-600);
-  letter-spacing: -0.5px;
-}
-.ns-name { font-size: 16px; font-weight: 700; color: var(--text-900); margin-top: 6px; }
-.ns-dept { font-size: 12.5px; color: var(--text-500); font-weight: 600; margin-top: 2px; }
-
-.ns-meta {
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-soft);
+.dept-queue-header {
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border, #e4e7ec);
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 10px;
 }
-.ns-meta-row {
+
+.dept-queue-header .dept-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.dept-queue-header .dept-info h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900, #1a1a2e);
+}
+
+.dept-queue-header .dept-info .dept-stats {
+  font-size: 12px;
+  color: var(--gray-500, #667085);
+  display: flex;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.dept-queue-body {
+  padding: 16px 20px;
+}
+
+/* Now Serving section within a card */
+.dept-now-serving {
+  background: var(--blue-50, #eff6ff);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12.5px;
-  color: var(--text-500);
+  gap: 12px;
 }
-.ns-meta-row strong { color: var(--text-900); font-size: 13px; }
 
-.ns-actions {
+.dept-now-serving .ns-left {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 10px;
-  margin-top: 20px;
 }
-.ns-actions .btn { width: 100%; }
 
-@media (max-width: 1000px) {
-  .mgmt-grid { grid-template-columns: 1fr; }
+.dept-now-serving .ns-token-badge {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--blue-700, #1d4ed8);
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--blue-200, #bfdbfe);
+}
+
+.dept-now-serving .ns-patient {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gray-900, #1a1a2e);
+}
+
+.dept-now-serving .ns-empty {
+  color: var(--gray-500, #667085);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.dept-now-serving .ns-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dept-now-serving .ns-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.dept-now-serving .ns-actions button:hover {
+  opacity: 0.85;
+}
+
+.dept-now-serving .ns-actions .btn-call {
+  background: var(--blue-600, #2563eb);
+  color: #fff;
+}
+
+.dept-now-serving .ns-actions .btn-served {
+  background: var(--green-600, #16a34a);
+  color: #fff;
+}
+
+.dept-now-serving .ns-actions .btn-skip {
+  background: var(--amber-500, #f59e0b);
+  color: #fff;
+}
+
+/* Waiting list table inside a card */
+.dept-waiting-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dept-waiting-table th {
+  text-align: left;
+  padding: 8px 4px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-500, #667085);
+  border-bottom: 1px solid var(--border, #e4e7ec);
+}
+
+.dept-waiting-table td {
+  padding: 8px 4px;
+  font-size: 13px;
+  color: var(--gray-700, #344054);
+  border-bottom: 1px solid var(--gray-100, #f2f4f7);
+}
+
+.dept-waiting-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dept-waiting-table .waiting-empty td {
+  color: var(--gray-400, #98a2b3);
+  text-align: center;
+  padding: 20px 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dept-queue-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dept-now-serving {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dept-now-serving .ns-actions {
+    justify-content: flex-end;
+  }
 }
