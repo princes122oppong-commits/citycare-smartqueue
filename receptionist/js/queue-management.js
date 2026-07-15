@@ -183,22 +183,25 @@ function createDepartmentCard(dept) {
   }
   body.appendChild(nowServingDiv);
 
-  // Waiting list table
+  // Waiting list table (show max 3 rows + "more" indicator)
+  const displayWaiting = waiting.slice(0, 3);
+  const hasMore = waiting.length > 3;
   const table = document.createElement("table");
   table.className = "dept-waiting-table";
   table.innerHTML = `
     <thead>
-      <tr><th>Token</th><th>Patient</th><th>Wait Time</th></tr>
+      <tr><th>Token</th><th>Patient</th><th>Wait</th></tr>
     </thead>
     <tbody id="waiting-body-${dept.id}">
-      ${waiting.length > 0
-        ? waiting.map((r) => `
+      ${displayWaiting.length > 0
+        ? displayWaiting.map((r) => `
             <tr>
               <td><strong>${escapeHtml(r.tokenNo)}</strong></td>
               <td>${escapeHtml(r.patientName)}</td>
               <td>${r.timeInQueue}</td>
             </tr>
-          `).join("")
+          `).join("") +
+          (hasMore ? `<tr class="waiting-empty"><td colspan="3">+${waiting.length - 3} more waiting</td></tr>` : "")
         : '<tr class="waiting-empty"><td colspan="3">No patients waiting</td></tr>'
       }
     </tbody>
