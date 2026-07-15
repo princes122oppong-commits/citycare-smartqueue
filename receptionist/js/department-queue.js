@@ -194,23 +194,19 @@ async function markCurrentAsServed() {
 
   // Send notification to reception receptionist about the served patient
   try {
-    // Find the receptionist_id of the receptionist who registered this patient
+    // Find the staff_id who registered this patient
     var entryResult = await supabaseClient
       .from("queue_entries")
-      .select("receptionist_id, patient_id")
+      .select("staff_id, patient_id")
       .eq("id", currentServingId)
       .single();
 
     if (!entryResult.error && entryResult.data) {
-      var receptionreceptionistId = entryResult.data.receptionist_id;
+      var entryStaffId = entryResult.data.staff_id;
       var patientId = entryResult.data.patient_id;
 
-      // Create a notification for the reception receptionist
-      if (receptionreceptionistId) {
-        // We'll store this in a notifications-like way
-        // For now, the real-time subscription will update the queue management page
-        console.log("Patient " + currentServing.patientName + " (" + currentServing.tokenNo + ") served. Notifying reception.");
-      }
+      // The real-time subscription will update the queue management page
+      console.log("Patient " + currentServing.patientName + " (" + currentServing.tokenNo + ") served.");
 
       // Also notify the patient
       if (patientId) {

@@ -239,7 +239,7 @@ async function insertWalkinPatient(payload) {
         token_no: token,
         patient_id: patientId,
         department_id: departmentId,
-        receptionist_id: receptionistId,
+        staff_id: receptionistId,
         status: "waiting",
         type: "walk-in",
         reason: payload.reason,
