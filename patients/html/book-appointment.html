@@ -129,5 +129,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../../supabase-config.js"></script>
 <script src="../js/book-appointment.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var btn = document.getElementById("logout-btn");
+  if (btn && typeof supabaseClient !== "undefined" && supabaseClient) {
+    btn.addEventListener("click", async function() {
+      if (!confirm("Sign out of your patient account?")) return;
+      await supabaseClient.auth.signOut();
+      window.location.href = "../../login.html";
+    });
+  }
+});
+</script>
 </body>
 </html>
