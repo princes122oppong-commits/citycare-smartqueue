@@ -198,7 +198,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../../supabase-config.js"></script>
 <script src="../js/supabaseClient.js"></script>
+<script src="../../shared/js/notifications-toast.js"></script>
 <script src="../js/common.js"></script>
 <script src="../js/walkin-registration.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+  if (typeof supabaseClient === "undefined" || !supabaseClient) return;
+  var user = await supabaseClient.auth.getUser();
+  if (user.error || !user.data.user) return;
+  var staffResult = await supabaseClient.from("receptionist").select("department_id").eq("auth_uid", user.data.user.id).maybeSingle();
+  if (!staffResult.error && staffResult.data && staffResult.data.department_id) {
+    subscribereceptionistNotifications(staffResult.data.department_id);
+  }
+});
+</script>
 </body>
 </html>
