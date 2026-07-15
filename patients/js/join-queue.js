@@ -73,6 +73,31 @@ async function updateSummary() {
   if (aheadValue) aheadValue.textContent = `${peopleAhead} people`;
 }
 
+async function generateTokenNumber(departmentId, _departmentName) {
+  if (!supabaseClient || !departmentId) return null;
+  try {
+    const { data, error } = await supabaseClient
+      .rpc('generate_next_queue_token', { p_department_id: departmentId });
+    if (error) {
+      console.warn("Failed to generate token via database function:", error.message);
+      // Fallback: count-based approach
+      const initials = await getDepartmentInitials(departmentId);
+      const prefix = initials || "Q";
+      const { count } = await supabaseClient
+        .from("queue_entries")
+        .select("*", { count: "exact", head: true })
+        .eq("department_id", departmentId)
+        .gte("joined_at", startOfTodayIso());
+      const sequence = String((count || 0) + 1).padStart(3, "0");
+      return `${prefix}${sequence}`;
+    }
+    return data;
+  } catch (e) {
+    console.warn("Could not generate token:", e.message);
+    return null;
+  }
+}
+
 async function getDepartmentInitials(departmentId) {
   try {
     var result = await supabaseClient
@@ -87,28 +112,6 @@ async function getDepartmentInitials(departmentId) {
     console.warn("Could not fetch department initials:", e.message);
   }
   return null;
-}
-
-function getDepartmentPrefix(departmentName) {
-  const words = (departmentName || "G").split(/\s+/).filter(Boolean);
-  return words[0]?.charAt(0).toUpperCase() || "Q";
-}
-
-async function generateTokenNumber(departmentId, departmentName) {
-  var prefix = await getDepartmentInitials(departmentId);
-  if (!prefix) {
-    prefix = getDepartmentPrefix(departmentName);
-  }
-  const { count, error } = await supabaseClient
-    .from("queue_entries")
-    .select("*", { count: "exact", head: true })
-    .eq("department_id", departmentId)
-    .gte("joined_at", startOfTodayIso());
-
-  if (error) throw error;
-
-  const sequence = String((count || 0) + 1).padStart(3, "0");
-  return `${prefix}${sequence}`;
 }
 
 async function handleSubmit(e) {
