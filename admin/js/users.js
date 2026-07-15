@@ -354,7 +354,7 @@ async function handleTableClick(e) {
 
     // If deleting from receptionist table, first nullify any queue_entries references
     if (user.source === "receptionist") {
-      await supabaseClient.from("queue_entries").update({ receptionist_id: null }).eq("receptionist_id", user.id);
+      await supabaseClient.from("queue_entries").update({ staff_id: null }).eq("staff_id", user.id);
     }
 
     // Delete from the source table (receptionist, patients, or users)
