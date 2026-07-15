@@ -73,12 +73,18 @@ async function loadNotifications() {
     .from('notifications')
     .select('*')
     .eq('patient_id', patient.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false, nullsFirst: false });
 
   if (error) {
     console.warn('Failed to load notifications:', error.message);
+    // Show error in the list for debugging
+    const list = document.getElementById('notif-list');
+    if (list) {
+      list.innerHTML = `<div class="n-empty" style="padding:32px 4px; text-align:center; color:#d0393f; font-size:13.5px;">Error loading notifications: ${escapeHtml(error.message)}</div>`;
+    }
     notifications = [];
   } else {
+    console.log('Loaded', (data || []).length, 'notifications for patient', patient.id);
     notifications = data.map((n) => ({
       ...n,
       icon: n.icon || (n.category === 'queue' ? '📡' : n.category === 'appointments' ? '📅' : '🔔'),

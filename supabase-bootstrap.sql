@@ -425,6 +425,7 @@ drop policy if exists "Administrators can delete notifications" on notifications
 create policy "Patients can access own notifications" on notifications
   for select using (
     exists (select 1 from patients p where p.id = notifications.patient_id and p.auth_uid = auth.uid())
+    or notifications.patient_id in (select id from patients where auth_uid = auth.uid())
   );
 create policy "Patients can insert own notifications" on notifications
   for insert with check (

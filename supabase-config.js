@@ -58,7 +58,7 @@ async function getCurrentPatient() {
     .from("patients")
     .select("*")
     .eq("auth_uid", user.id)
-    .single();
+    .maybeSingle();
   if (error) {
     console.warn("Patient profile not found:", error.message);
     return null;
