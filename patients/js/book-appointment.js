@@ -63,6 +63,53 @@ function updateSummary() {
   document.getElementById("sum-time").textContent = selectedSlot ? selectedSlot.textContent : "—";
 }
 
+async function loadExistingAppointments() {
+  const container = document.getElementById("existing-appointments");
+  if (!container || !supabaseClient) return;
+
+  const patient = await getCurrentPatient();
+  if (!patient) return;
+
+  const { data, error } = await supabaseClient
+    .from("appointments")
+    .select("id, department_id, scheduled_at, status, type")
+    .eq("patient_id", patient.id)
+    .order("scheduled_at", { ascending: true });
+
+  if (error) {
+    console.warn("Unable to load appointments:", error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    container.innerHTML = `<div class="n-empty" style="padding:16px 4px; text-align:center; color:var(--text-400); font-size:13px;">No existing appointments.</div>`;
+    return;
+  }
+
+  // Map department ids to names
+  const { data: depts } = await supabaseClient
+    .from("departments")
+    .select("id, name");
+
+  const deptMap = {};
+  (depts || []).forEach(d => { deptMap[d.id] = d.name; });
+
+  container.innerHTML = data.map(a => {
+    const dt = new Date(a.scheduled_at);
+    const dateStr = dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const timeStr = dt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const statusClass = a.status === "Confirmed" ? "badge-success" : a.status === "Cancelled" ? "badge-danger" : "badge-warning";
+    return `<div class="existing-appt-item">
+      <div class="ea-icon">📅</div>
+      <div class="ea-body">
+        <div class="ea-title">${escapeHtml(deptMap[a.department_id] || "Department")}</div>
+        <div class="ea-meta">${dateStr} · ${timeStr}</div>
+      </div>
+      <span class="badge ${statusClass}">${escapeHtml(a.status)}</span>
+    </div>`;
+  }).join("");
+}
+
 function initTimeSlots() {
   const slots = document.querySelectorAll(".time-slot");
   slots.forEach((slot, i) => {
@@ -151,6 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setMinDate();
   initTimeSlots();
   updateSummary();
+  await loadExistingAppointments();
 
   document.getElementById('department').addEventListener('change', updateSummary);
   document.getElementById('date').addEventListener('change', updateSummary);
