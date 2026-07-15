@@ -70,6 +70,7 @@ async function getCurrentStaffOrAdmin() {
   const user = await getCurrentAuthUser();
   if (!user) return null;
 
+  // Check receptionist table first
   const staffQuery = await supabaseClient
     .from("receptionist")
     .select("*, department_id")
@@ -78,6 +79,17 @@ async function getCurrentStaffOrAdmin() {
 
   if (!staffQuery.error && staffQuery.data) {
     return { type: "staff", profile: staffQuery.data };
+  }
+
+  // Check department_staff table
+  const deptStaffQuery = await supabaseClient
+    .from("department_staff")
+    .select("*, department_id")
+    .eq("auth_uid", user.id)
+    .maybeSingle();
+
+  if (!deptStaffQuery.error && deptStaffQuery.data) {
+    return { type: "staff", profile: deptStaffQuery.data };
   }
 
   const usersQuery = await supabaseClient

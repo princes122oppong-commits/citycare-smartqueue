@@ -35,23 +35,19 @@ function normalizeUser(row, source, roleOverride = null) {
 }
 
 async function loadUsers() {
-  const [adminRows, receptionistRows, patientRows] = await Promise.all([
+  const [adminRows, receptionistRows, deptStaffRows, patientRows] = await Promise.all([
     fetchTable("users", { order: { column: "joined_at", ascending: false } }),
     fetchTable("receptionist", { order: { column: "created_at", ascending: false } }),
+    fetchTable("department_staff", { order: { column: "created_at", ascending: false } }),
     fetchTable("patients", { order: { column: "created_at", ascending: false } }),
   ]);
 
   const adminUsers = adminRows.map((row) => normalizeUser(row, "users"));
-  const receptionistUsers = receptionistRows.map((row) => normalizeUser(row, "receptionist", row.role || "receptionist"));
+  const receptionistUsers = receptionistRows.map((row) => normalizeUser(row, "receptionist", "Receptionist"));
+  const deptStaffUsers = deptStaffRows.map((row) => normalizeUser(row, "department_staff", "Department"));
   const patientUsers = patientRows.map((row) => normalizeUser(row, "patients", "Patient"));
-  // Map "Department" role from receptionist table to display as "Department"
-  receptionistUsers.forEach(function(u) {
-    if (u.role === "receptionist" && u.department_id) {
-      u.role = "Department";
-    }
-  });
 
-  allUsers = [...adminUsers, ...receptionistUsers, ...patientUsers].sort((a, b) => {
+  allUsers = [...adminUsers, ...receptionistUsers, ...deptStaffUsers, ...patientUsers].sort((a, b) => {
     const aDate = new Date(a.joined || 0).getTime();
     const bDate = new Date(b.joined || 0).getTime();
     return bDate - aDate;
@@ -254,8 +250,9 @@ async function handleUserFormSubmit(e) {
   const isreceptionistUser = formValues.role === "receptionist";
   const isDeptUser = formValues.role === "Department";
 
-  // For new receptionist/department users, save to "receptionist" table with department_id (not the "users" table)
-  const targetTable = existing?.source || (isreceptionistUser || isDeptUser ? "receptionist" : tableForRole(formValues.role));
+  // For new receptionist users, save to "receptionist" table.
+  // For department users, save to "department_staff" table.
+  const targetTable = existing?.source || (isreceptionistUser ? "receptionist" : isDeptUser ? "department_staff" : tableForRole(formValues.role));
 
   // Create auth account for new receptionist or admin users
   if (!existing && needsAuthAccount(formValues.role)) {
@@ -274,9 +271,18 @@ async function handleUserFormSubmit(e) {
     payload = {
       full_name: formValues.name,
       email: formValues.email,
-      role: isDeptUser ? "receptionist" : formValues.role,
+      role: formValues.role,
       status: formValues.status,
-      department_id: isDeptUser ? formValues.department_id : (isreceptionistUser ? null : null),
+      department_id: null,
+      auth_uid: formValues.authUid || null,
+    };
+  } else if (targetTable === "department_staff") {
+    payload = {
+      full_name: formValues.name,
+      email: formValues.email,
+      role: "Staff",
+      status: formValues.status,
+      department_id: formValues.department_id,
       auth_uid: formValues.authUid || null,
     };
   } else if (targetTable === "patients") {
@@ -310,12 +316,12 @@ async function handleUserFormSubmit(e) {
 
   closeModal();
   await loadUsers();
-  if (!existing && targetTable === "receptionist" && isDeptUser) {
-    alert("Department account created. They can now log in via the Department Portal.");
+  if (!existing && targetTable === "department_staff") {
+    alert("Department staff account created. They can now log in via the Department Portal.");
   } else if (!existing && targetTable === "receptionist") {
-    alert("receptionist login account created and saved.");
+    alert("Receptionist login account created and saved.");
   } else if (!existing && targetTable === "users") {
-    alert("receptionist login account created and saved.");
+    alert("Admin account created and saved.");
   }
 }
 
