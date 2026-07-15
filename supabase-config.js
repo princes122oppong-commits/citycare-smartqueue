@@ -51,9 +51,19 @@ async function getCurrentAuthUser() {
   return user;
 }
 
-async function getCurrentPatient() {
+// Cache the current patient to avoid repeated DB queries on the same page
+let _cachedPatient = null;
+let _cachedPatientUser = null;
+
+async function getCurrentPatient(forceRefresh = false) {
   const user = await getCurrentAuthUser();
   if (!user) return null;
+
+  // Return cached patient if same user and not forced refresh
+  if (!forceRefresh && _cachedPatient && _cachedPatientUser === user.id) {
+    return _cachedPatient;
+  }
+
   const { data, error } = await supabaseClient
     .from("patients")
     .select("*")
@@ -63,6 +73,9 @@ async function getCurrentPatient() {
     console.warn("Patient profile not found:", error.message);
     return null;
   }
+
+  _cachedPatient = data;
+  _cachedPatientUser = user.id;
   return data;
 }
 

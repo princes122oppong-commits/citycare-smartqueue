@@ -491,9 +491,16 @@ create policy "Administrators can delete settings" on settings
 
 create index if not exists idx_queue_entries_status on queue_entries(status);
 create index if not exists idx_queue_entries_department on queue_entries(department_id);
+create index if not exists idx_queue_entries_patient_status on queue_entries(patient_id, status);
+create index if not exists idx_queue_entries_dept_status_joined on queue_entries(department_id, status, joined_at);
 create index if not exists idx_appointments_patient on appointments(patient_id);
 create index if not exists idx_appointments_scheduled on appointments(scheduled_at);
+create index if not exists idx_appointments_patient_scheduled on appointments(patient_id, scheduled_at);
+create index if not exists idx_appointments_dept_status on appointments(department_id, status);
 create index if not exists idx_notifications_patient on notifications(patient_id);
+create index if not exists idx_notifications_patient_unread on notifications(patient_id, unread);
+create index if not exists idx_patients_auth_uid on patients(auth_uid);
+create index if not exists idx_receptionist_auth_uid on receptionist(auth_uid);
 create index if not exists idx_receptionist_department on receptionist(department_id);
 
 /* ==========================================================================
