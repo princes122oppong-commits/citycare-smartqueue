@@ -34,7 +34,7 @@
       <li><a href="queue-status.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>2. Queue Status</a></li>
       <li><a href="book-appointment.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>3. Book Appointment</a></li>
       <li><a href="join-queue.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M18 8v5M20.5 10.5H15.5"/></svg>4. Join Queue</a></li>
-      <li><a href="notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10 20a2 2 0 004 0"/></svg>5. Notifications<span class="badge-count">3</span></a></li>
+      <li><a href="notifications.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10 20a2 2 0 004 0"/></svg>5. Notifications<span class="badge-count" id="unread-count">0</span></a></li>
       <li><a href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>6. Profile</a></li>
     </ul>
 
@@ -136,7 +136,8 @@
 <script src="../../supabase-config.js"></script>
 <script src="../js/queue-status.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
+  // Logout handler
   var btn = document.getElementById("logout-btn");
   if (btn && typeof supabaseClient !== "undefined" && supabaseClient) {
     btn.addEventListener("click", async function() {
@@ -144,6 +145,18 @@ document.addEventListener("DOMContentLoaded", function() {
       await supabaseClient.auth.signOut();
       window.location.href = "../../login.html";
     });
+  }
+  // Unread notification count
+  if (typeof supabaseClient !== "undefined" && supabaseClient) {
+    var user = await supabaseClient.auth.getUser();
+    if (!user.error && user.data.user) {
+      var { data: patient } = await supabaseClient.from("patients").select("id").eq("auth_uid", user.data.user.id).maybeSingle();
+      if (patient) {
+        var { count } = await supabaseClient.from("notifications").select("*", { count: "exact", head: true }).eq("patient_id", patient.id).eq("unread", true);
+        var badge = document.getElementById("unread-count");
+        if (badge) { badge.textContent = count || 0; badge.style.display = (count > 0 ? "" : "none"); }
+      }
+    }
   }
 });
 </script>
