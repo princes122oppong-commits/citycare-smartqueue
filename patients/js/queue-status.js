@@ -25,7 +25,7 @@ function renderTokenSummary(token) {
     ? escapeHtml(token.departments?.name || 'Unknown')
     : token.departments?.name || 'Unknown';
   document.getElementById('people-ahead').textContent = token.people_ahead ?? '\u2014';
-  document.getElementById('wait-time').textContent = token.estimated_wait_minutes ? token.estimated_wait_minutes + ' mins' : '\u2014';
+  document.getElementById('wait-time').textContent = (token.people_ahead ?? 0) > 0 ? (token.people_ahead * 20) + ' mins' : '< 1 min';
   document.getElementById('status-pill').innerHTML = '<span class="dot"></span>' + (typeof escapeHtml === 'function' ? escapeHtml(token.status) : token.status);
 }
 
