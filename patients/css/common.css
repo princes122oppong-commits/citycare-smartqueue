@@ -379,7 +379,8 @@ textarea.input{ resize:vertical; min-height:80px; }
 ::-webkit-scrollbar-track{ background:transparent; }
 
 /* ---------------- Mobile hamburger toggle ---------------- */
-.mobile-toggle {
+.mobile-toggle,
+.mobile-sidebar-toggle {
   display: none;
   position: fixed;
   top: 16px;
@@ -396,11 +397,13 @@ textarea.input{ resize:vertical; min-height:80px; }
   box-shadow: var(--shadow-card);
   cursor: pointer;
 }
-.mobile-toggle svg { width: 20px; height: 20px; }
+.mobile-toggle svg,
+.mobile-sidebar-toggle svg { width: 20px; height: 20px; }
 
 /* ---------------- Responsive ---------------- */
 @media (max-width: 980px){
-  .mobile-toggle { display: flex; }
+  .mobile-toggle,
+  .mobile-sidebar-toggle { display: flex; }
   .sidebar {
     display: flex;
     position: fixed;
@@ -426,7 +429,8 @@ textarea.input{ resize:vertical; min-height:80px; }
   .nav a{ padding: 10px 12px; font-size: 13px; }
   .sidebar-help{ padding: 12px; }
   .btn{ font-size: 13px; padding: 10px 16px; }
-  .mobile-toggle{ top: 12px; left: 12px; width: 36px; height: 36px; }
+  .mobile-toggle,
+  .mobile-sidebar-toggle { top: 12px; left: 12px; width: 36px; height: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce){
