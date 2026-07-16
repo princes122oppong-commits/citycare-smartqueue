@@ -362,14 +362,18 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-right: 12px;
 }
-.mobile-sidebar-toggle svg { width: 18px; height: 18px; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
-  .mobile-sidebar-toggle { display: flex; }
-  .topbar { padding: 16px; }
+  .mobile-sidebar-toggle {
+    display: flex !important;
+    position: fixed !important;
+    top: 16px !important;
+    left: 16px !important;
+    z-index: 60 !important;
+  }
+  .topbar { padding: 16px 16px 16px 60px; }
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.2s ease;
