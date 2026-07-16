@@ -351,8 +351,25 @@ body {
   color: var(--blue-600);
 }
 
+/* ---------- Mobile Sidebar Toggle ---------- */
+.mobile-sidebar-toggle {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 12px;
+}
+.mobile-sidebar-toggle svg { width: 18px; height: 18px; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
+  .mobile-sidebar-toggle { display: flex; }
+  .topbar { padding: 16px; }
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.2s ease;
