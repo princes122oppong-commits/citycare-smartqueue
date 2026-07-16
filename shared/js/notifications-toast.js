@@ -184,6 +184,30 @@ function subscribePatientNotifications(patientId) {
 }
 
 // ==========================================================================
+// Generic badge update function
+// ==========================================================================
+
+function updateNotificationBadge(departmentId) {
+  if (!supabaseClient) return;
+  
+  var query = supabaseClient.from('notifications').select('*', { count: 'exact', head: true }).eq('unread', true);
+  
+  // If we don't have a specific badge element, find any badge-dot in header
+  Promise.resolve().then(function() {
+    return query;
+  }).then(function(result) {
+    var count = result.count || 0;
+    var badges = document.querySelectorAll('.badge-dot');
+    badges.forEach(function(badge) {
+      badge.textContent = count;
+      badge.style.display = count > 0 ? '' : 'none';
+    });
+  }).catch(function(e) {
+    console.warn('Failed to update notification badge:', e.message);
+  });
+}
+
+// ==========================================================================
 // Admin: Subscribe to all system notifications
 // Call this on admin pages for system-wide notifications
 // ==========================================================================
