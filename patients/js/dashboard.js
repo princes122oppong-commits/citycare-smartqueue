@@ -221,7 +221,7 @@ const [queueResult, appointmentResult, departmentResult] = await Promise.all([
     .from("appointments")
     .select("id, patient_id, scheduled_at, status, type, department_id")
     .eq("patient_id", patient.id)
-    .gte("scheduled_at", new Date().toISOString())
+    .gte("scheduled_at", new Date(new Date().toDateString()).toISOString())
     .order("scheduled_at", { ascending: true })
     .limit(1),
   supabaseClient.from("departments").select("id, name"),
@@ -452,7 +452,7 @@ async function refreshAppointment(patient) {
     .from("appointments")
     .select("id, patient_id, scheduled_at, status, type, department_id")
     .eq("patient_id", patient.id)
-    .gte("scheduled_at", new Date().toISOString())
+    .gte("scheduled_at", new Date(new Date().toDateString()).toISOString())
     .order("scheduled_at", { ascending: true })
     .limit(1);
 
