@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notifications · CityCare Hospital Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../css/admin-dashboard.css" />
+<link rel="stylesheet" href="notifications.css" />
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <img class="brand__icon" src="../../citycare.png" alt="CityCare Hospital" style="width:34px;height:34px;border-radius:10px;object-fit:cover;">
+      <div class="brand__text">
+        <span class="brand__title">SmartQueue</span>
+        <span class="brand__subtitle">Health</span>
+      </div>
+    </div>
+    <div class="sidebar__badge">Admin Panel</div>
+
+    <nav class="sidebar__nav">
+      <a class="nav__item" href="admin-dashboard.html">
+        <span class="nav__icon">🏠</span> 1. Dashboard
+      </a>
+      <a class="nav__item" href="users.html">
+        <span class="nav__icon">👥</span> 2. Users
+      </a>
+      <a class="nav__item" href="departments.html">
+        <span class="nav__icon">🏢</span> 3. Departments
+      </a>
+      <a class="nav__item" href="queue.html">
+        <span class="nav__icon">📋</span> 4. Queue Management
+      </a>
+      <a class="nav__item" href="appointments.html">
+        <span class="nav__icon">📅</span> 5. Appointments
+      </a>
+      <a class="nav__item" href="reports.html">
+        <span class="nav__icon">📊</span> 6. Reports / Analytics
+      </a>
+      <a class="nav__item nav__item--active" href="notifications.html">
+        <span class="nav__icon">🔔</span> 7. Notifications
+      </a>
+      <a class="nav__item" href="settings.html">
+        <span class="nav__icon">⚙</span> 8. Settings
+      </a>
+    </nav>
+
+    <button class="sidebar__signout" id="signoutBtn">🚪 Sign Out</button>
+    <div class="sidebar__user">
+      <div class="user__avatar">A</div>
+      <div class="user__info">
+        <span class="user__name" id="admin-name">Admin User</span>
+        <span class="user__email" id="admin-email">admin@citycare.com</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <header class="topbar">
+      <button class="topbar__menu" data-sidebar-toggle aria-label="Toggle menu">☰</button>
+      <div class="topbar__title">
+        <h1>System Notifications</h1>
+        <p>Manage and view all system notifications.</p>
+      </div>
+      <div class="topbar__actions">
+        <button class="icon-btn" onclick="testToast()" title="Test popup notifications" aria-label="Test notifications">🧪</button>
+        <button class="icon-btn" aria-label="Notifications">
+          🔔 <span class="icon-btn__badge" id="notifCount">6</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="stat-grid" id="statGrid">
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--blue">📧</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Total Notifications</span>
+          <span class="stat-card__value" id="statTotal">0</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--purple">📬</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Unread</span>
+          <span class="stat-card__value" id="statUnread">0</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__icon stat-card__icon--orange">📖</div>
+        <div class="stat-card__body">
+          <span class="stat-card__label">Read Today</span>
+          <span class="stat-card__value" id="statReadToday">0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-2" style="margin-top:24px;">
+      <div class="card">
+        <div class="card__header">
+          <h2>All Notifications</h2>
+          <button class="select-pill" id="mark-all-read">Mark all as read</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Icon</th><th>Title</th><th>Patient</th><th>Time</th><th>Status</th></tr>
+            </thead>
+            <tbody id="notifBody">
+              <tr><td colspan="5">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__header">
+          <h2>Quick Stats</h2>
+        </div>
+        <div class="alert-list" id="quickStats">
+          <div class="alert-item">
+            <span class="alert-item__icon">📋</span>
+            <div class="alert-item__body">
+              <span class="alert-item__title">Queue Notifications</span>
+              <span class="alert-item__meta" id="queueCount">0 today</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <span class="alert-item__icon">📅</span>
+            <div class="alert-item__body">
+              <span class="alert-item__title">Appointment Notifications</span>
+              <span class="alert-item__meta" id="apptCount">0 today</span>
+            </div>
+          </div>
+          <div class="alert-item">
+            <span class="alert-item__title">System Notifications</span>
+            <span class="alert-item__meta" id="systemCount">0 today</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../supabase-config.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../../shared/js/notifications-toast.js"></script>
+<script src="notifications.js"></script>
+</body>
+</html>

@@ -29,6 +29,7 @@ function showToast(title, body, type) {
     error: { bg: '#fdeaea', border: '#d0393f', icon: '❌' },
     queue: { bg: '#eef4ff', border: '#2f5fe0', icon: '📋' },
     appointment: { bg: '#eef4ff', border: '#2f5fe0', icon: '📅' },
+    system: { bg: '#fefce8', border: '#ca8a04', icon: '⚙️' }
   };
 
   var c = colors[type] || colors.info;
@@ -176,6 +177,29 @@ function subscribePatientNotifications(patientId) {
           showToast('Service Complete', 'Your consultation is complete. Thank you for visiting!', 'success');
         } else if (eventType === 'INSERT' && entry.status === 'waiting') {
           showToast('Queue Joined', 'You\'ve joined the queue. Token: ' + (entry.token_no || '') + '. Please wait for your turn.', 'queue');
+        }
+      }
+    )
+    .subscribe();
+}
+
+// ==========================================================================
+// Admin: Subscribe to all system notifications
+// Call this on admin pages for system-wide notifications
+// ==========================================================================
+
+function subscribeAdminNotifications() {
+  if (!supabaseClient) return;
+
+  // Listen for all notifications
+  supabaseClient
+    .channel('admin-notifications')
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'notifications' },
+      function(payload) {
+        var notif = payload.new;
+        if (payload.eventType === 'INSERT') {
+          showToast(notif.title || 'New Notification', notif.body || '', notif.category || 'info');
         }
       }
     )

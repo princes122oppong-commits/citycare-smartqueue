@@ -100,11 +100,28 @@ document.addEventListener("DOMContentLoaded", async function() {
   // Subscribe to realtime updates
   subscribeToChanges();
 
-  // Subscribe to popup notifications
+// Subscribe to popup notifications
   if (typeof subscribereceptionistNotifications === "function") {
     subscribereceptionistNotifications(deptId);
   }
+
+  // Update notification badge
+  updateNotificationBadge();
 });
+
+// Update unread notification badge
+async function updateNotificationBadge() {
+  if (!supabaseClient || !deptId) return;
+  var { count } = await supabaseClient
+    .from("notifications")
+    .select("*", { count: "exact", head: true })
+    .eq("unread", true);
+  var badge = document.getElementById("unread-badge");
+  if (badge) {
+    badge.textContent = count || 0;
+    badge.style.display = count > 0 ? "" : "none";
+  }
+}
 
 async function loadQueue() {
   if (!supabaseClient || !deptId) {
