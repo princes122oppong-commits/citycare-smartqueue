@@ -3,7 +3,7 @@
    Uses Supabase to create a live walk-in queue entry.
    ============================================================ */
 
-const AVERAGE_MINUTES_PER_PATIENT = 5;
+const AVERAGE_MINUTES_PER_PATIENT = 20;
 
 function getSelectedDepartment() {
   const select = document.getElementById("department");

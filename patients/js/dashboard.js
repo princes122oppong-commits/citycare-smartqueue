@@ -341,13 +341,9 @@ if(queue){
   document.getElementById(
     "wait-time"
   ).textContent =
-
-
-    queue.expected_wait_minutes
-
-    ? `${queue.expected_wait_minutes} mins`
-
-    : "—";
+    peopleAhead > 0
+    ? `${peopleAhead * 20} mins`
+    : "< 1 min";
 
 
 
@@ -487,9 +483,18 @@ async function refreshQueue(patient) {
     : null;
 
   if (queue) {
+    // Calculate estimated wait time: 20 mins per person ahead
+    var { count } = await supabaseClient
+      .from("queue_entries")
+      .select("*", { count: "exact", head: true })
+      .eq("department_id", queue.department_id)
+      .eq("status", "waiting")
+      .lt("joined_at", queue.joined_at);
+    var ahead = count ?? 0;
+
     document.getElementById("current-queue").textContent = queue.token_no;
     document.getElementById("current-dept").textContent = queue.department_name || "Unknown Department";
-    document.getElementById("wait-time").textContent = queue.expected_wait_minutes ? queue.expected_wait_minutes + " mins" : "—";
+    document.getElementById("wait-time").textContent = ahead > 0 ? (ahead * 20) + " mins" : "< 1 min";
     document.getElementById("queue-status-pill").innerHTML = '<span class="dot"></span>' + escapeHtml(queue.status);
   }
 }

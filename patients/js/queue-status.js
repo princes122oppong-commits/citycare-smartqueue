@@ -80,7 +80,7 @@ async function loadCurrentToken(patient) {
     ...token,
     departments: { name: departmentMap[token.department_id] || 'Unknown' },
     people_ahead: count || 0,
-    estimated_wait_minutes: (count || 0) * 5,
+    estimated_wait_minutes: (count || 0) * 20,
   };
 }
 
