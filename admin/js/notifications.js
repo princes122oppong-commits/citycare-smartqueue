@@ -22,7 +22,8 @@ async function loadNotifications() {
 
   const { data, error } = await supabaseClient
     .from('notifications')
-    .select('*, patients!inner(full_name)')
+    .select('*, patients(full_name)')
+    .in('recipient_role', ['admin', 'receptionist', 'department_staff', 'patient'])
     .order('created_at', { ascending: false });
 
   if (error) {

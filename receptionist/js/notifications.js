@@ -27,11 +27,15 @@ async function loadNotifications() {
     .maybeSingle();
 
   let query = supabaseClient.from('notifications')
-    .select('*, patients!inner(full_name)')
+    .select('*, patients(full_name)')
+    .eq('recipient_role', 'receptionist')
     .order('created_at', { ascending: false });
 
-  // If staff has a department, filter to show relevant notifications
-  // For now, show all notifications since the table is patient-centric
+  // If staff has a department, filter by department
+  if (staff?.department_id) {
+    query = query.eq('department_id', staff.department_id);
+  }
+
   const { data, error } = await query;
 
   if (error) {

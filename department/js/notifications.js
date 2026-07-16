@@ -20,10 +20,11 @@ function formatNotificationTime(timestamp) {
 async function loadNotifications() {
   if (!supabaseClient || !deptId) return;
 
-  // Get notifications for patients in this department's queue entries
+  // Get notifications for this department staff
   const { data, error } = await supabaseClient
     .from('notifications')
-    .select('*, patients!inner(full_name)')
+    .select('*, patients(full_name)')
+    .eq('recipient_role', 'department_staff')
     .eq('department_id', deptId)
     .order('created_at', { ascending: false });
 
