@@ -147,6 +147,9 @@ img{max-width:100%;display:block;}
 .icon-teal{background:var(--teal-600);}
 .feature-card h3{font-size:1.05rem;margin-bottom:.4rem;color:var(--navy-900);}
 .feature-card p{color:var(--gray-600);font-size:.92rem;}
+.features-link-wrap{text-align:center;margin-top:2rem;}
+.features-link-wrap .btn-outline{border-color:var(--blue-600);color:var(--blue-600);}
+.features-link-wrap .btn-outline:hover{background:var(--blue-600);color:#fff;}
 
 /* About */
 .about{background:var(--blue-50);padding:4.5rem 1.5rem;}
