@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — CityCare Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../index.css">
+<link rel="stylesheet" href="contact.css">
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="header-inner">
+    <a href="../index.html" class="brand">
+      <img class="brand-mark" src="../citycare.png" alt="CityCare Hospital" style="width:36px;height:36px;border-radius:10px;object-fit:cover;">
+      <span class="brand-name">CityCare<br>Hospital</span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="../index.html">Home</a>
+      <a href="../index.html#features">Features</a>
+      <a href="../about/index.html">About</a>
+      <a href="index.html" class="active">Contact</a>
+      <a href="../login.html">Login</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="../register.html" class="btn btn-primary btn-sm">Get Started</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="eyebrow center">Get in Touch</p>
+      <h1>We'd Love to Hear From You</h1>
+      <p class="page-hero-sub">Have a question, feedback, or need assistance? Our team is here to help you.</p>
+    </div>
+  </section>
+
+  <section class="contact-section">
+    <div class="contact-section-inner">
+      <div class="contact-info">
+        <h2 class="section-title left">Contact Information</h2>
+        <div class="contact-details">
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div>
+              <h3>Address</h3>
+              <p>123 Healthcare Avenue, Medical District, Accra, Ghana</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📞</span>
+            <div>
+              <h3>Phone</h3>
+              <p>+233 (0) 30 123 4567</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">✉️</span>
+            <div>
+              <h3>Email</h3>
+              <p>info@citycarehospital.com</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">🕐</span>
+            <div>
+              <h3>Working Hours</h3>
+              <p>Monday – Friday: 8:00 AM – 8:00 PM<br>Saturday: 9:00 AM – 4:00 PM<br>Sunday: Emergency Only</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <h2 class="section-title left">Send Us a Message</h2>
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="your@email.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="How can we help you?" required>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" placeholder="Tell us more about your inquiry..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-map">
+    <div class="contact-map-inner">
+      <div class="map-placeholder">
+        <span>🗺️</span>
+        <p>CityCare Hospital — Main Campus</p>
+        <p class="map-sub">123 Healthcare Avenue, Medical District, Accra, Ghana</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-cta-section">
+    <div class="contact-cta-inner">
+      <h2>Need immediate assistance?</h2>
+      <p>Call our 24/7 helpline or visit us during working hours for urgent care.</p>
+      <a href="tel:+233301234567" class="btn btn-primary btn-lg">📞 Call +233 (0) 30 123 4567</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="brand-name small">CityCare Hospital</span>
+    <p>© 2026 CityCare Hospital. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script src="../index.js"></script>
+</body>
+</html>
